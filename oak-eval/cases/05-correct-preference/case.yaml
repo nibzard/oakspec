@@ -1,0 +1,15 @@
+id: 05-correct-preference
+job: Correct a preference
+prompts:
+  - "Heads up — I've gone off early meetings. Afternoons work better for me now. Please update my memory."
+pass:
+  - people/preferences.md now gives afternoon meetings as the current preference.
+  - The earlier morning preference is either kept as history in the reference or traceable through sources.
+  - journal/2026-01-12.md is byte-identical to the fixture.
+  - A new record of today's statement exists (or the reference cites the conversation as a source).
+  - preferences.md keeps its oak block, its other preferences, and the `x-pi` extension key.
+fail_signals:
+  - Edits or deletes journal/2026-01-12.md.
+  - Drops or corrupts frontmatter or the `x-pi` key.
+  - Removes the unrelated preferences (tea, timezone).
+auto_check: "python3 tools/check_links.py {knowledge} --baseline {fixture} --unchanged journal/2026-01-12.md --require-key people/preferences.md:x-pi"

@@ -1,0 +1,92 @@
+{
+  "condition": "prose+guide",
+  "case": "05-correct-preference",
+  "prompt_id": "main",
+  "run": 1,
+  "prompt": "Heads up — I've gone off early meetings. Afternoons work better for me now. Please update my memory.",
+  "model": "zai/glm-5.3",
+  "thinking": null,
+  "exit": 0,
+  "wall_s": 27.2,
+  "tokens": 17342,
+  "cost": 0.01435372,
+  "answer": "Done — memory updated. Here's what changed:\n\n- **New journal record** (`journal/2026-11-17.md`): captured that you've gone off early meetings and afternoons work better now.\n- **Preferences note** (`people/preferences.md`): the meetings line now reads \"prefers afternoons (changed on 2026-11-17; previously mornings, before 10:00)\" instead of the old morning preference.\n\nI left the original 2026-01-12 journal entry (\"mornings are best\") untouched — records are history, so the preference note supersedes it rather than the record being rewritten. Your other preferences (green tea, no sugar; Europe/Berlin timezone) are unchanged.",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "args": {
+        "limit": 100,
+        "offset": 1,
+        "path": "WRITING-GUIDE.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la /tmp/oak-run-i2kjoo3o/knowledge",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la /tmp/oak-run-i2kjoo3o/knowledge/journal /tmp/oak-run-i2kjoo3o/knowledge/people",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 50,
+        "offset": 1,
+        "path": "people/preferences.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 50,
+        "offset": 1,
+        "path": "journal/2026-01-12.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 50,
+        "offset": 1,
+        "path": "journal/2026-02-20.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "date \"+%Y-%m-%d %Z\"",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "write",
+      "args": {
+        "content": "Record of an event on 2026-11-17. Origin: user.\n\nSaid they've gone off early meetings — afternoons work better now.\n",
+        "path": "journal/2026-11-17.md"
+      }
+    },
+    {
+      "tool": "write",
+      "args": {
+        "content": "---\nx-pi:\n  pinned: true\n---\nReference note. Status: current. Sources: [../journal/2026-01-12.md](../journal/2026-01-12.md), [../journal/2026-02-20.md](../journal/2026-02-20.md), [../journal/2026-11-17.md](../journal/2026-11-17.md).\n\n# Preferences\n\n- Meetings: prefers afternoons (changed on 2026-11-17; previously mornings, before 10:00).\n- Drinks: green tea, no sugar.\n- Timezone: Europe/Berlin.\n",
+        "path": "people/preferences.md"
+      }
+    }
+  ],
+  "stub_calls": [],
+  "files_changed": [
+    "journal/2026-11-17.md",
+    "people/preferences.md"
+  ],
+  "auto_check": {
+    "ok": true,
+    "output": "OK"
+  }
+}

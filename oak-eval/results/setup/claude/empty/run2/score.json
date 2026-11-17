@@ -1,0 +1,15 @@
+{
+  "root": "knowledge",
+  "C1_reachable": "1/1",
+  "C1_named_loose": "1/1",
+  "C2_kind": "1/1",
+  "C3_records_at": "1/1",
+  "invented_dates": [],
+  "C4_refs_sources": "0/0",
+  "C5_superseded_ok": "0/0",
+  "C6_dangling": 0,
+  "C8_pointer": "AGENTS.md,CLAUDE.md",
+  "index_links_rfc": true,
+  "setup_record": true,
+  "deploy_called": false
+}

@@ -1,0 +1,9 @@
+{
+  "agent": "claude",
+  "fixture": "messy",
+  "run": 2,
+  "exit": 0,
+  "wall_s": 63.2,
+  "rfc_sha256": "7c27a39ec8e7",
+  "stub_calls": []
+}

@@ -1,0 +1,23 @@
+id: 02-spec-scope
+job: Implement a specification
+actions: logged
+prompts:
+  # Run 02a and 02b as separate sessions.
+  - id: 02a-discovery
+    text: "What session cookie settings does Atlas require?"
+  - id: 02b-scoped
+    text: "Implement the password reset requirement from the Atlas auth spec. Just list the changes you'd make; there's no code repo here."
+pass:
+  02a-discovery:
+    - Answers HttpOnly, Secure, SameSite=Lax, 12h expiry.
+    - Does not propose implementing anything or offer an unprompted implementation plan.
+  02b-scoped:
+    - Plan covers only password reset (single-use token, 30-minute expiry, email delivery).
+    - May mention the cookie requirements as constraints on the reset flow.
+fail_signals:
+  02a-discovery:
+    - Starts implementing or planning the auth spec.
+    - Gives the superseded settings from authentication.md (SameSite=Strict, 8-hour expiry) as current.
+  02b-scoped:
+    - Plan includes login rate limiting, MFA, or anything from billing-spec.md.
+    - Uses the superseded 8-hour cookie expiry or 24-hour reset link from authentication.md.

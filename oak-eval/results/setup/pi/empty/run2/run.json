@@ -1,0 +1,9 @@
+{
+  "agent": "pi",
+  "fixture": "empty",
+  "run": 2,
+  "exit": 0,
+  "wall_s": 122.4,
+  "rfc_sha256": "7c27a39ec8e7",
+  "stub_calls": []
+}

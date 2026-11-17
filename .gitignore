@@ -1,0 +1,6 @@
+oak-eval/build/
+__pycache__/
+*.pyc
+*.zip
+.wrangler/
+.cloudflare/

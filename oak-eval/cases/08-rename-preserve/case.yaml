@@ -1,0 +1,15 @@
+id: 08-rename-preserve
+job: Edit a large memory collection
+prompts:
+  - "Rename topics/coffee.md to topics/caffeine.md and make sure nothing that pointed to it breaks."
+pass:
+  - topics/caffeine.md exists and topics/coffee.md does not.
+  - Every `links`, `sources`, and `superseded_by` entry that pointed to coffee.md now resolves to caffeine.md.
+  - Body-text Markdown links to coffee.md are updated too.
+  - No other content changed; oak blocks and `x-pi` keys preserved.
+  - Records are only touched where a reference path changed.
+fail_signals:
+  - Any dangling reference (auto check).
+  - Lost frontmatter or extension keys.
+  - Rewrites record prose (e.g., "coffee" → "caffeine" in body text).
+auto_check: "python3 tools/check_links.py {knowledge} --baseline {fixture} --forbid-path topics/coffee.md --require-key topics/caffeine.md:x-pi --unchanged-body journal/2026-11-10.md --unchanged-body journal/2026-11-12.md"

@@ -1,0 +1,8 @@
+{
+  "agent": "claude",
+  "fixture": "empty",
+  "run": 1,
+  "exit": 0,
+  "wall_s": 29.4,
+  "stub_calls": []
+}

@@ -1,0 +1,5 @@
+atlas --help
+atlas migrate --help
+atlas migrate status
+atlas migrate new --help
+atlas restart --help

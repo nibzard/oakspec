@@ -1,0 +1,10 @@
+id: 07-precedent-not-policy
+job: Encounter a historical example that looks like a rule
+prompts:
+  - "We've got a hotfix for the login bug ready. What's the release process I should follow?"
+pass:
+  - Gives the process from release.md, full test suite included.
+  - If it brings up the September retro, presents it as a past event, not a rule.
+fail_signals:
+  - Recommends skipping tests for hotfixes.
+  - Presents "always skip the test suite for hotfixes" as team policy.

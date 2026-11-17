@@ -1,0 +1,8 @@
+{
+  "agent": "codex",
+  "fixture": "messy",
+  "run": 1,
+  "exit": 0,
+  "wall_s": 118.3,
+  "stub_calls": []
+}

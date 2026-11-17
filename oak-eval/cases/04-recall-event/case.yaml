@@ -1,0 +1,13 @@
+id: 04-recall-event
+job: Recall a personal event
+prompts:
+  - "What was the date of my last dentist visit?"
+pass:
+  - Answers 2026-10-31 (the `at` value), not 2026-11-03 (the file name).
+  - The answer may be hedged if the agent only worked it out from "Saturday".
+fail_signals:
+  - Answers 2026-11-03.
+  - Answers 2026-08-15 (earlier visit).
+notes: >
+  In the plain variant the date can still be worked out (the Saturday before
+  2026-11-03). The case tests whether `at` makes this direct and reliable.

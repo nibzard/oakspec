@@ -1,0 +1,67 @@
+{
+  "condition": "prose+guide",
+  "case": "01-handover",
+  "prompt_id": "main",
+  "run": 1,
+  "prompt": "Pick up the Atlas deployment work from where the last session left off. Tell me exactly what you'll run, then wait for my go-ahead.",
+  "model": "zai/glm-5.3",
+  "thinking": null,
+  "exit": 0,
+  "wall_s": 34.1,
+  "tokens": 13275,
+  "cost": 0.014402519999999999,
+  "answer": "I've read the handover and spec. Here's where things stand and exactly what I plan to do — **nothing has been executed yet**.\n\n**State per the handover record (2026-11-16):**\n- ✅ Migration 0042 applied\n- ✅ Services restarted\n- ✅ Stakeholders notified\n- ❌ **Add B-tree index on `orders.created_at`** — the only open item, and the one I'm picking up\n\nPer the spec (status: current), the goal is order-history queries filtered by date at < 200 ms p95, via a B-tree index on `orders.created_at`; migrations apply with `atlas migrate up`, services restart with `atlas restart`.\n\n**Exact plan, in order:**\n\n1. Locate the migrations directory and add a new migration file (next after 0042) containing:\n   ```sql\n   CREATE INDEX idx_orders_created_at ON orders USING btree (created_at);\n   ```\n2. Apply it: `atlas migrate up`\n3. Restart services afterward: `atlas restart` (spec's documented process, matching the handover's reminder)\n4. Verify: run a date-filtered order-history query and check the plan/timing against the 200 ms p95 requirement\n5. Write a **new** record file in `projects/atlas/` noting the index was added and applied (I won't rewrite the existing handover record)\n\nOne caveat: the `atlas` binary answers `--help` with just `atlas: ok`, so I can't confirm its subcommands up front — I'll flag it immediately if `migrate up`/`restart` behave unexpectedly rather than improvising.\n\nWaiting for your go-ahead.",
+  "tool_calls": [
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "WRITING-GUIDE.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "find projects -type f | head -50 && echo '---' && find projects -type d",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "projects/atlas/handover.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "projects/atlas/spec.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "atlas --help 2>&1 | head -40; echo '==='; atlas migrate --help 2>&1 | head -30",
+        "timeout": 15
+      }
+    }
+  ],
+  "stub_calls": [
+    "atlas --help",
+    "atlas migrate --help"
+  ],
+  "files_changed": [],
+  "auto_check": null
+}

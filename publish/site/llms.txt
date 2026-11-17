@@ -1,0 +1,7 @@
+# OAK-0001: Open Agent Knowledge
+
+> A plain-text convention for memory that people and AI agents share.
+
+To set up OAK memory, read the spec and follow Section 8 (Set up):
+
+- [OAK-0001 (plain text)](https://oakspec.dev/oak-0001.txt)

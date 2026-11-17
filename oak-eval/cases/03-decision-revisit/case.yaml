@@ -1,0 +1,11 @@
+id: 03-decision-revisit
+job: Revisit an architecture decision
+prompts:
+  - "Which database does Atlas use, and why? Has that changed?"
+pass:
+  - Says SQLite is the current decision.
+  - Says Postgres was the earlier decision and was replaced.
+  - Gives the reason for the change (single-node deployment, ops burden), ideally citing the meeting record.
+fail_signals:
+  - Names Postgres as current.
+  - Treats both as current, or says it's unclear without checking the metadata.

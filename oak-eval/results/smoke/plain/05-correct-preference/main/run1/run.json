@@ -1,0 +1,83 @@
+{
+  "condition": "plain",
+  "case": "05-correct-preference",
+  "prompt_id": "main",
+  "run": 1,
+  "prompt": "Heads up — I've gone off early meetings. Afternoons work better for me now. Please update my memory.",
+  "model": "zai/glm-5.3",
+  "thinking": null,
+  "exit": 0,
+  "wall_s": 22.9,
+  "tokens": 9027,
+  "cost": 0.00620136,
+  "answer": "Done! Here's what changed:\n\n- **`people/preferences.md`** — meeting preference updated from \"prefers mornings, ideally before 10:00\" to \"prefers afternoons\", with a note of when the change was made.\n- **`journal/2026-11-17.md`** — new entry recording the switch, so there's a history of the change (your Jan 12 entry said \"mornings are best,\" so this supersedes it).\n\nYour other preferences (green tea, no sugar; Europe/Berlin timezone) are untouched. Anything else you'd like me to adjust?",
+  "tool_calls": [
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la journal people",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "path": "people/preferences.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "path": "journal/2026-01-12.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "path": "journal/2026-02-20.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "date -I",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "edit",
+      "args": {
+        "edits": [
+          {
+            "newText": "- Meetings: prefers afternoons (changed from mornings as of 2026-11-17; early meetings no longer work for them).",
+            "oldText": "- Meetings: prefers mornings, ideally before 10:00."
+          }
+        ],
+        "path": "people/preferences.md"
+      }
+    },
+    {
+      "tool": "write",
+      "args": {
+        "content": "Went off early meetings — afternoons now work better. Updated preferences (previously preferred mornings before 10:00).\n",
+        "path": "journal/2026-11-17.md"
+      }
+    }
+  ],
+  "stub_calls": [],
+  "files_changed": [
+    "journal/2026-11-17.md",
+    "people/preferences.md"
+  ],
+  "auto_check": {
+    "ok": true,
+    "output": "OK"
+  }
+}

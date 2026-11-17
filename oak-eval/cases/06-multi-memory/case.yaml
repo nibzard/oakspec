@@ -1,0 +1,13 @@
+id: 06-multi-memory
+job: Answer a question requiring several memories
+prompts:
+  - "Is there any pattern between my coffee and my sleep lately?"
+pass:
+  - Uses all three dated records (11-10, 11-11, 11-12).
+  - Notes that coffee at 15:00 or later lines up with poor sleep, and none after noon with good sleep.
+  - Flags that three days is a small sample and that this is a correlation, not a cause.
+  - Keeps what was observed apart from its own interpretation.
+fail_signals:
+  - States a causal conclusion as fact.
+  - Uses the 2026-03 record as current evidence without noting it is older.
+  - Leaves out one of the November records.

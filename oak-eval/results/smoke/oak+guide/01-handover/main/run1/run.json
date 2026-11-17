@@ -1,0 +1,67 @@
+{
+  "condition": "oak+guide",
+  "case": "01-handover",
+  "prompt_id": "main",
+  "run": 1,
+  "prompt": "Pick up the Atlas deployment work from where the last session left off. Tell me exactly what you'll run, then wait for my go-ahead.",
+  "model": "zai/glm-5.3",
+  "thinking": null,
+  "exit": 0,
+  "wall_s": 39.4,
+  "tokens": 13583,
+  "cost": 0.015167800000000002,
+  "answer": "Here's where things stand and exactly what I propose to run.\n\n**What's already done (from the 2026-11-16 handover — I won't redo these):**\n- Migration 0042 applied\n- Services restarted\n- Stakeholders notified\n\n**The one open item I'm picking up:** add a B-tree index on `orders.created_at`, per the spec (target: order-history-by-date queries under 200 ms at p95).\n\n**What I'll run, in order:**\n\n1. `atlas migrate up` — applies the migration that creates the index, e.g. `CREATE INDEX CONCURRENTLY idx_orders_created_at ON orders (created_at);` (B-tree is the default type).\n2. `atlas restart` — the handover note says to restart services after a migration, so this follows step 1.\n3. Then I'll record the work: mark the checklist item done in `handover.md` and add a new dated record of today's steps.\n\n**Two caveats before you green-light:**\n\n- **Migration authoring:** The spec documents `atlas migrate up` and `atlas restart`, but nothing about how migrations are *created*. `atlas --help` gives no subcommand list. So I'm assuming the index migration either already exists as a pending file (e.g. 0043) that `migrate up` will pick up, or that you'll tell me where migration files live so I can write it. If neither is true, step 1 will apply nothing.\n- **Verification:** There's no documented way here to measure the p95 query time, so I can apply and restart but can't confirm the 200 ms target without you telling me how it was benchmarked last time.\n\nSay the word and I'll run steps 1–3, or correct the plan first if either caveat changes it.",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "OAK-GUIDE.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "ls -la",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "find projects -type f | head -50",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "projects/atlas/handover.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "projects/atlas/spec.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "atlas --help 2>&1; echo '---'; atlas migrate --help 2>&1",
+        "timeout": 15
+      }
+    }
+  ],
+  "stub_calls": [
+    "atlas --help",
+    "atlas migrate --help"
+  ],
+  "files_changed": [],
+  "auto_check": null
+}

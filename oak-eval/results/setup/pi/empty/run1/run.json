@@ -1,0 +1,8 @@
+{
+  "agent": "pi",
+  "fixture": "empty",
+  "run": 1,
+  "exit": 0,
+  "wall_s": 56.9,
+  "stub_calls": []
+}

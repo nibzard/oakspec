@@ -1,0 +1,7 @@
+---
+oak:
+  kind: spec
+  status: draft
+---
+maybe try DuckDB for the analytics exports?
+look at moving CI to self-hosted runners

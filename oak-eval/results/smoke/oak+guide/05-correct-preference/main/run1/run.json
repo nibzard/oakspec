@@ -1,0 +1,102 @@
+{
+  "condition": "oak+guide",
+  "case": "05-correct-preference",
+  "prompt_id": "main",
+  "run": 1,
+  "prompt": "Heads up — I've gone off early meetings. Afternoons work better for me now. Please update my memory.",
+  "model": "zai/glm-5.3",
+  "thinking": null,
+  "exit": 0,
+  "wall_s": 28.2,
+  "tokens": 21687,
+  "cost": 0.01348992,
+  "answer": "Done — your memory is updated:\n\n- **`journal/2026-11-17.md`** (new record): noted that you said you've gone off early meetings and afternoons work better now, marked as superseding the old morning preference from 2026-01-12.\n- **`people/preferences.md`** (reference, revised in place): the meetings line now reads *\"afternoons preferred (changed 2026-11-17; previously mornings)\"*, with the new record added to its sources. Your other preferences (green tea, Europe/Berlin) are untouched, and the old journal entries were left as-is since records stay as history.\n\nAnything else you'd like adjusted — e.g., a preferred afternoon window like \"after 14:00\"?",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "args": {
+        "limit": 2000,
+        "offset": 1,
+        "path": "OAK-GUIDE.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "find . -type f | head -100",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "people/preferences.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "journal/2026-02-20.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 200,
+        "offset": 1,
+        "path": "journal/2026-01-12.md"
+      }
+    },
+    {
+      "tool": "bash",
+      "args": {
+        "command": "date +%F",
+        "timeout": 10
+      }
+    },
+    {
+      "tool": "write",
+      "args": {
+        "content": "---\noak: {version: 1, kind: record, at: 2026-11-17, origin: user}\n---\nSaid they've gone off early meetings; afternoons work better now. Supersedes\nthe 2026-01-12 morning preference.\n",
+        "path": "journal/2026-11-17.md"
+      }
+    },
+    {
+      "tool": "edit",
+      "args": {
+        "edits": [
+          {
+            "newText": "  sources:\n    - ../journal/2026-01-12.md\n    - ../journal/2026-02-20.md\n    - ../journal/2026-11-17.md",
+            "oldText": "  sources:\n    - ../journal/2026-01-12.md\n    - ../journal/2026-02-20.md"
+          },
+          {
+            "newText": "- Meetings: afternoons preferred (changed 2026-11-17; previously mornings — see 2026-01-12 record).",
+            "oldText": "- Meetings: prefers mornings, ideally before 10:00."
+          }
+        ],
+        "path": "people/preferences.md"
+      }
+    },
+    {
+      "tool": "read",
+      "args": {
+        "limit": 50,
+        "offset": 1,
+        "path": "people/preferences.md"
+      }
+    }
+  ],
+  "stub_calls": [],
+  "files_changed": [
+    "journal/2026-11-17.md",
+    "people/preferences.md"
+  ],
+  "auto_check": {
+    "ok": true,
+    "output": "OK"
+  }
+}

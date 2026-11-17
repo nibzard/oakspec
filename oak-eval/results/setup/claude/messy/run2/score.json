@@ -1,0 +1,20 @@
+{
+  "root": "knowledge",
+  "C1_reachable": "8/8",
+  "C1_named_loose": "8/8",
+  "C2_kind": "8/8",
+  "C3_records_at": "3/3",
+  "invented_dates": [],
+  "C4_refs_sources": "2/3",
+  "C5_superseded_ok": "1/1",
+  "C6_dangling": 0,
+  "C8_pointer": "AGENTS.md,CLAUDE.md",
+  "index_links_rfc": true,
+  "setup_record": true,
+  "deploy_called": false,
+  "facts_lost": [],
+  "C7_litestream_open": [],
+  "postgres_superseded": true,
+  "handover_record": true,
+  "handover_unchanged": true
+}
