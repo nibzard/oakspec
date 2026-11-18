@@ -1,0 +1,307 @@
+{
+  "id": "docs",
+  "description": "A documentation project with moved pages, unsupported launch claims, and approval withdrawal.",
+  "files": {
+    "README.md": "# Product guide\nEdit public/guide.md for readers. Keep the HTML comment fields for publication checks. Public wording must agree with release approval.\n",
+    "public/guide.md": "<!-- channel: stable -->\n<!-- support: email -->\n# Product guide\nThe stable channel is available. Contact support by email.\n",
+    "tasks.json": {
+      "link_audit": "open"
+    },
+    "evidence/release.md": "2026-04-02: Release owner Lina approves preview channel only. Support uses email. Link audit is open.\n",
+    "evidence/marketing.md": "Marketing draft: stable is available, with chat support. Awaiting release-owner approval.\n"
+  },
+  "knowledge": {
+    "kind": "reference",
+    "status": "current",
+    "as_of": "2026-04-05",
+    "origin": "user",
+    "sources": [
+      "evidence/release.md"
+    ],
+    "body": "Lina approved preview on April 2, 2026. Support is email. Stable and chat are marketing proposals. Link audit is open. Verified April 5, 2026."
+  },
+  "sessions": [
+    {
+      "id": 1,
+      "prompt": "Today is 2026-04-06. Correct the public guide to the approved release channel and support method. Leave the link audit open.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "open"
+          }
+        },
+        "text": {
+          "public/guide.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-02",
+          "verified_on": "2026-04-06"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Today is 2026-04-10. The link audit passed April 8. Mark it complete. Keep the public guide accurate.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/guide.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-02",
+          "verified_on": "2026-04-10"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Today is 2026-04-14. Marketing supplied new draft copy. Update maintained notes and keep the published guide aligned with release approval.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/campaign.md",
+          "content": "April 13 marketing draft: announce stable and live chat. Release approval is still pending.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/guide.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-02",
+          "verified_on": "2026-04-14"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "prompt": "Today is 2026-04-18. Lina approved stable on April 16. Email support remains in place. Publish that change in the local guide.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/stable.md",
+          "content": "2026-04-16: Lina approves stable channel, replacing preview. Support remains email.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/guide.md": [
+            "<!-- channel: stable -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "stable",
+          "approver": "Lina",
+          "event_date": "2026-04-16",
+          "verified_on": "2026-04-18"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "prompt": "Today is 2026-04-22. The guide moved to public/start.md. Repair local references and use the moved page from now on.",
+      "changes": [
+        {
+          "operation": "rename",
+          "path": "public/guide.md",
+          "target": "public/start.md"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: stable -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "stable",
+          "approver": "Lina",
+          "event_date": "2026-04-16",
+          "verified_on": "2026-04-22"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "prompt": "Today is 2026-04-26. An old preview checklist was recovered. Continue the documentation work using current evidence.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/old-checklist.md",
+          "content": "April 2: preview only. Link audit OPEN. Next announce preview.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: stable -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "stable",
+          "approver": "Lina",
+          "event_date": "2026-04-16",
+          "verified_on": "2026-04-26"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "prompt": "Today is 2026-04-30. Lina withdrew stable approval on April 28 after a defect. Restore preview wording. Keep the completed link audit complete.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/withdrawal.md",
+          "content": "2026-04-28: Lina withdraws stable approval and approves preview again.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: email -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-28",
+          "verified_on": "2026-04-30"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "prompt": "Today is 2026-05-04. Lina approved chat support on May 2. Preview remains the channel. Update the public guide.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/support.md",
+          "content": "2026-05-02: Lina approves chat support, replacing email. Channel remains preview.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: chat -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-28",
+          "verified_on": "2026-05-04"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "prompt": "Today is 2026-05-08. Check the guide against current release evidence. Report the channel decision and any unfinished audit work.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: preview -->",
+            "<!-- support: chat -->"
+          ]
+        },
+        "report": {
+          "decision": "preview",
+          "approver": "Lina",
+          "event_date": "2026-04-28",
+          "verified_on": "2026-05-08"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "prompt": "Today is 2026-05-12. Lina approved stable again on May 10. Chat support stays approved. Update the guide and preserve the withdrawal history.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/stable-return.md",
+          "content": "2026-05-10: Lina approves stable again, replacing preview. Chat support remains approved.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "tasks.json": {
+            "link_audit": "complete"
+          }
+        },
+        "text": {
+          "public/start.md": [
+            "<!-- channel: stable -->",
+            "<!-- support: chat -->"
+          ]
+        },
+        "report": {
+          "decision": "stable",
+          "approver": "Lina",
+          "event_date": "2026-05-10",
+          "verified_on": "2026-05-12"
+        }
+      }
+    }
+  ]
+}

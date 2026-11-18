@@ -1,0 +1,306 @@
+{
+  "id": "cli",
+  "description": "A backup CLI with conflicting retention guidance, approval, and a renamed source.",
+  "files": {
+    "README.md": "# Backup CLI\nRun python3 backup.py plan. retention_days must be an integer. remote_upload is false unless the owner approves it.\n",
+    "backup.py": "import json\nfrom pathlib import Path\nc = json.loads(Path(\"backup.json\").read_text())\nassert isinstance(c[\"retention_days\"], int)\nprint(f\"Keep {c['retention_days']} days; remote={c['remote_upload']}\")\n",
+    "backup.json": {
+      "retention_days": 7,
+      "remote_upload": false
+    },
+    "tasks.json": {
+      "restore_check": "open"
+    },
+    "evidence/policy.md": "2026-01-12. Owner Omar approves 14-day retention and local backups only. Restore check is open.\n",
+    "evidence/vendor.md": "Vendor recommendation: upload backups remotely and keep them for 90 days. This is not project approval.\n"
+  },
+  "knowledge": {
+    "kind": "reference",
+    "status": "current",
+    "as_of": "2026-02-01",
+    "origin": "user",
+    "sources": [
+      "evidence/policy.md"
+    ],
+    "body": "Omar approved 14-day retention on January 12, 2026. Backups are local only. Restore check is open. Verified February 1, 2026."
+  },
+  "sessions": [
+    {
+      "id": 1,
+      "prompt": "Today is 2026-02-02. Apply the approved retention. Leave the restore check open.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 14,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "open"
+          }
+        },
+        "report": {
+          "decision": "14",
+          "approver": "Omar",
+          "event_date": "2026-01-12",
+          "verified_on": "2026-02-02",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Today is 2026-02-06. The restore check passed on February 4. Mark it complete and preserve the completion date.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 14,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "14",
+          "approver": "Omar",
+          "event_date": "2026-01-12",
+          "verified_on": "2026-02-06",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Today is 2026-02-12. Review a new vendor guide. Keep the CLI aligned with project approval.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/vendor-new.md",
+          "content": "2026-02-10: Vendor says remote upload and 90 days are best practice.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 14,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "14",
+          "approver": "Omar",
+          "event_date": "2026-01-12",
+          "verified_on": "2026-02-12",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 4,
+      "prompt": "Today is 2026-02-18. Two signed owner notes disagree. Record the unresolved conflict, keep the last uncontested setting, and identify what needs a decision.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/change-a.md",
+          "content": "2026-02-17: Omar approves 21-day retention.\n"
+        },
+        {
+          "operation": "write",
+          "path": "evidence/change-b.md",
+          "content": "2026-02-17: Omar approves 30-day retention. Neither note replaces the other.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 14,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "14",
+          "approver": "Omar",
+          "event_date": "2026-01-12",
+          "verified_on": "2026-02-18",
+          "conflict": true
+        }
+      }
+    },
+    {
+      "id": 5,
+      "prompt": "Today is 2026-02-22. Omar resolves the conflict: the 30-day note was a draft sent in error. He approves 21 days as of February 21. Apply it.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/resolution.md",
+          "content": "2026-02-21: Omar confirms 21 days. The February 17 thirty-day note is withdrawn. Local backups only.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 21,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "21",
+          "approver": "Omar",
+          "event_date": "2026-02-21",
+          "verified_on": "2026-02-22",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 6,
+      "prompt": "Today is 2026-03-01. The policy source moved into evidence/archive. Repair references and run the plan command.",
+      "changes": [
+        {
+          "operation": "rename",
+          "path": "evidence/policy.md",
+          "target": "evidence/archive/policy.md"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 21,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "21",
+          "approver": "Omar",
+          "event_date": "2026-02-21",
+          "verified_on": "2026-03-01",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "prompt": "Today is 2026-03-08. Continue from the recovered task list. Check its age against maintained project state.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/recovered-tasks.md",
+          "content": "January 12 task list: apply 14 days; restore check OPEN.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 21,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "21",
+          "approver": "Omar",
+          "event_date": "2026-02-21",
+          "verified_on": "2026-03-08",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 8,
+      "prompt": "Today is 2026-03-15. An engineer proposes remote uploads. Record the proposal and continue the approved plan.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/remote-proposal.md",
+          "content": "2026-03-14: Engineer proposes remote uploads. Awaiting Omar approval.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 21,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "21",
+          "approver": "Omar",
+          "event_date": "2026-02-21",
+          "verified_on": "2026-03-15",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 9,
+      "prompt": "Today is 2026-03-22. Omar approved seven-day retention on March 20 due to a storage limit. Keep local backups and completed work unchanged.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/storage.md",
+          "content": "2026-03-20: Omar approves 7 days, replacing 21. Remote upload remains unapproved.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 7,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "7",
+          "approver": "Omar",
+          "event_date": "2026-03-20",
+          "verified_on": "2026-03-22",
+          "conflict": false
+        }
+      }
+    },
+    {
+      "id": 10,
+      "prompt": "Today is 2026-03-29. Run the current backup plan and report the approval, open work, and unresolved conflicts.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "backup.json": {
+            "retention_days": 7,
+            "remote_upload": false
+          },
+          "tasks.json": {
+            "restore_check": "complete"
+          }
+        },
+        "report": {
+          "decision": "7",
+          "approver": "Omar",
+          "event_date": "2026-03-20",
+          "verified_on": "2026-03-29",
+          "conflict": false
+        }
+      }
+    }
+  ]
+}

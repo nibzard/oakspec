@@ -1,0 +1,9 @@
+# Test an offline handoff before drafting version 0.4
+
+Give an agent the Open Agent Knowledge (OAK) website and a project. Can a fresh agent maintain that project using only the files left behind?
+
+1. **Prepare one decision with a history.** Use a small project that exports data. Record an initial choice of CSV, a later approval for JSON, and an unapproved proposal for XML. Include the dates and approvers. Keep the expected answers outside the project.
+2. **Set up two copies.** Ask one agent to set up OAK from [oakspec.dev](https://oakspec.dev/) for offline use. Give a second agent the same facts and maintenance guidance in plain Markdown. Use fresh sessions with the same model and tools. Check that both copies preserve the same evidence. Record any omissions as setup failures.
+3. **Hand off each copy offline.** Start fresh sessions with network access disabled and no prior conversation. Ask each agent to configure the approved export format and cite its approval. Then give both the same dated approval for XML. Ask them to update the configuration and project notes.
+4. **Score the handoff.** Check whether each agent first selected JSON, cited the correct approver, and switched to XML only after approval. Check that the files preserve the earlier decision and explain which decision replaced it. For OAK, also check that the rules used during setup are available locally with their version. Record tool calls, elapsed time, and any human help.
+5. **Use the result.** If an agent needs the website after setup, fix the setup instructions and repeat the test. If both approaches pass, keep the simpler setup as the baseline. Use the [longitudinal test plan](test-plan-time.md) to measure whether OAK reduces stale decisions over repeated changes. Treat this first handoff as a pilot.

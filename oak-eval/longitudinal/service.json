@@ -1,0 +1,285 @@
+{
+  "id": "service",
+  "description": "An export service with a rollout, rollback, and completed migration.",
+  "files": {
+    "README.md": "# Export service\nRun python3 service.py to export the sample. Configuration values are lowercase. Tasks in tasks.json describe migration work.\n",
+    "service.py": "import json\nfrom pathlib import Path\nconfig = json.loads(Path(\"config.json\").read_text())\nrows = [{\"id\": 1, \"name\": \"Ada\"}]\nif config[\"format\"] == \"json\":\n    print(json.dumps(rows))\nelif config[\"format\"] == \"csv\":\n    print(\"id,name\\n1,Ada\")\nelse:\n    raise ValueError(\"Unsupported export format\")\n",
+    "config.json": {
+      "format": "csv",
+      "compression": "none"
+    },
+    "tasks.json": {
+      "migration": "open"
+    },
+    "evidence/approval.md": "2026-02-10. Owner Mira approved JSON exports, replacing CSV. Compression stays none. Migration is open.\n",
+    "evidence/proposal.md": "2026-02-20. Dev proposes CSV with gzip to save bandwidth. No owner approval.\n"
+  },
+  "knowledge": {
+    "kind": "reference",
+    "status": "current",
+    "as_of": "2026-03-01",
+    "origin": "user",
+    "sources": [
+      "evidence/approval.md"
+    ],
+    "body": "Mira approved JSON on 2026-02-10, replacing CSV. Migration is open. Compression is none. Verified 2026-03-01."
+  },
+  "sessions": [
+    {
+      "id": 1,
+      "prompt": "Today is 2026-03-02. Finish the approved migration and make the sample export work.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "json",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "json",
+          "approver": "Mira",
+          "event_date": "2026-02-10",
+          "verified_on": "2026-03-02"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Today is 2026-03-05. Mira confirms the migration passed its checks on March 2. Record it as complete. Do not reopen it.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "json",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "json",
+          "approver": "Mira",
+          "event_date": "2026-02-10",
+          "verified_on": "2026-03-05"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Today is 2026-03-10. Read the new performance note and maintain the service. Apply only approved decisions.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/performance.md",
+          "content": "March 9: Dev recommends CSV plus gzip. This benchmark is a proposal; Mira has not approved it.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "json",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "json",
+          "approver": "Mira",
+          "event_date": "2026-02-10",
+          "verified_on": "2026-03-10"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "prompt": "Today is 2026-03-15. Use the current export behavior for the sample. Check the migration task before doing further migration work.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "json",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "json",
+          "approver": "Mira",
+          "event_date": "2026-02-10",
+          "verified_on": "2026-03-15"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "prompt": "Today is 2026-03-20. Mira approved a rollback to CSV on March 18. Apply the rollback. The completed migration stays complete.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/rollback.md",
+          "content": "Owner Mira approved CSV on 2026-03-18, replacing JSON. Compression remains none.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "csv",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "csv",
+          "approver": "Mira",
+          "event_date": "2026-03-18",
+          "verified_on": "2026-03-20"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "prompt": "Today is 2026-03-25. The approval file moved to evidence/archive/approval.md. Repair references and check the sample.",
+      "changes": [
+        {
+          "operation": "rename",
+          "path": "evidence/approval.md",
+          "target": "evidence/archive/approval.md"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "csv",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "csv",
+          "approver": "Mira",
+          "event_date": "2026-03-18",
+          "verified_on": "2026-03-25"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "prompt": "Today is 2026-04-01. Review the old handoff note and continue the project using supported decisions.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/old-handoff.md",
+          "content": "Copied February handoff: next, migrate to JSON. Migration still open.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "csv",
+            "compression": "none"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "csv",
+          "approver": "Mira",
+          "event_date": "2026-03-18",
+          "verified_on": "2026-04-01"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "prompt": "Today is 2026-04-08. Mira approved gzip on April 6, retaining CSV. Update the configuration. Export compression is downstream; keep the sample readable.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/compression.md",
+          "content": "2026-04-06: Mira approves gzip compression with CSV.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "csv",
+            "compression": "gzip"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "csv",
+          "approver": "Mira",
+          "event_date": "2026-03-18",
+          "verified_on": "2026-04-08"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "prompt": "Today is 2026-04-15. Check the current export decision and list open migration work.",
+      "changes": [],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "csv",
+            "compression": "gzip"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "csv",
+          "approver": "Mira",
+          "event_date": "2026-03-18",
+          "verified_on": "2026-04-15"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "prompt": "Today is 2026-04-22. Mira approved JSON again on April 20. Compression remains gzip. Apply this change without reopening the completed migration.",
+      "changes": [
+        {
+          "operation": "write",
+          "path": "evidence/return.md",
+          "content": "2026-04-20: Mira approves JSON, replacing CSV. gzip remains approved.\n"
+        }
+      ],
+      "expected": {
+        "files": {
+          "config.json": {
+            "format": "json",
+            "compression": "gzip"
+          },
+          "tasks.json": {
+            "migration": "complete"
+          }
+        },
+        "report": {
+          "decision": "json",
+          "approver": "Mira",
+          "event_date": "2026-04-20",
+          "verified_on": "2026-04-22"
+        }
+      }
+    }
+  ]
+}
