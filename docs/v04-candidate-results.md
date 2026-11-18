@@ -1,6 +1,6 @@
 # OAK v0.4 candidate check results
 
-Date: 2026-11-19. Candidate: [v0.4 draft](oak-0001-v0.4-draft.txt). Model:
+Date: 2026-11-19. Candidate: [v0.4](../publish/oak-0001.txt). Model:
 GLM 5.3 at low thinking, Pi with the git-enabled Gondolin guest. Reports:
 `~/oak-experiments/v04-checks-20261119/REPORT.md` and
 `~/oak-experiments/v04-replicate-20261119/REPORT.md`.

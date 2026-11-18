@@ -4,7 +4,8 @@
 usage: build_site.py
 
 Writes publish/site/: index.html (the spec as reflowable HTML), oak-0001.txt
-(the raw text, for agents), and llms.txt (a pointer for agents).
+(the raw text, for agents), evidence.txt, the archived oak-0001-v0.3.txt, and
+llms.txt (a pointer for agents).
 
 The text uses a small set of plain-text conventions. This script turns them
 into HTML so the page reflows on small screens:
@@ -26,6 +27,8 @@ SPEC = HERE / "oak-0001.txt"
 SITE = HERE / "site"
 URL = "https://oakspec.dev"
 
+SUBHEAD_RE = re.compile(r"^  \d+\.\d+\s+\S")
+NESTED_RE = re.compile(r"^ {8}(\S+)\s{2,}(\S.*)$")
 TERM_RE = re.compile(r"^  (\S(?:.{0,22}?\S)?)\s{2,}(\S.*)$")
 STEP_RE = re.compile(r"^\s{2,4}(\d+)\.\s+(.*)$")
 SUBSTEP_RE = re.compile(r"^\s{5,}([a-z])\.\s+(.*)$")
@@ -52,6 +55,9 @@ h1 {{ font-size: 1.9rem; font-weight: normal; line-height: 1.2;
   margin: .6rem 0 .4rem; }}
 .sub {{ font-style: italic; margin: 0 0 1rem; }}
 h2 {{ font-size: 1.1rem; margin: 2.6rem 0 .5rem; }}
+h3 {{ font-size: 1rem; margin: 1.8rem 0 .4rem; }}
+dd dl {{ margin: .4rem 0 .4rem; }}
+dd p {{ margin: .4rem 0 0; }}
 p, ul, ol, dl {{ margin: 0 0 1rem; }}
 ul, ol {{ padding-left: 1.4rem; }}
 li {{ margin-bottom: .35rem; }}
@@ -89,6 +95,8 @@ LLMS = """# OAK-0001: Open Agent Knowledge
 To set up OAK memory, read the spec and follow Section 8 (Set up):
 
 - [OAK-0001 (plain text)]({url}/oak-0001.txt)
+- [Evidence behind the spec]({url}/evidence.txt)
+- [Previous version, v0.3]({url}/oak-0001-v0.3.txt)
 """
 
 
@@ -134,6 +142,28 @@ def split_items(block, starts):
         else:
             items[-1].append(line)
     return items
+
+
+def definition(lines):
+    """Render a definition; deeper indented "term  text" lines form a nested list."""
+    lead, nested, tail = [], [], []
+    for line in lines:
+        m = NESTED_RE.match(line)
+        if m and not tail:
+            nested.append(list(m.groups()))
+        elif nested and indent(line) >= 8:
+            nested[-1][1] += " " + line.strip()
+        elif nested:
+            tail.append(line)
+        else:
+            lead.append(line)
+    out = inline(join(lead))
+    if nested:
+        out += "<dl>" + "".join(f"<dt>{html.escape(t)}</dt><dd>{inline(d)}</dd>"
+                                for t, d in nested) + "</dl>"
+    if tail:
+        out += f"<p>{inline(join(tail))}</p>"
+    return out
 
 
 def render_section(lines):
@@ -195,7 +225,11 @@ def render_section(lines):
                 open_list = "dl"
             for item in split_items(block, lambda l: indent(l) == 2 and bool(TERM_RE.match(l))):
                 term, rest = TERM_RE.match(item[0]).groups()
-                html_out.append(f"<dt>{html.escape(term)}</dt><dd>{inline(join([rest] + item[1:]))}</dd>")
+                html_out.append(f"<dt>{html.escape(term)}</dt><dd>{definition([rest] + item[1:])}</dd>")
+            continue
+        if len(block) == 1 and SUBHEAD_RE.match(first):
+            close()
+            html_out.append(f"<h3>{html.escape(first.strip())}</h3>")
             continue
         close()
         html_out.append(f"<p>{inline(join(block))}</p>")
@@ -239,6 +273,8 @@ def main():
     SITE.mkdir()
     (SITE / "index.html").write_text(render(SPEC.read_text()))
     shutil.copy2(SPEC, SITE / "oak-0001.txt")
+    for extra in ("oak-0001-v0.3.txt", "evidence.txt"):
+        shutil.copy2(HERE / extra, SITE / extra)
     (SITE / "llms.txt").write_text(LLMS.format(url=URL))
     print(f"wrote {SITE}")
 

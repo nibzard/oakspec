@@ -1,0 +1,109 @@
+OAK-0001 evidence                                              2026-11-19
+What the tests behind OAK-0001 v0.4 found, including null results
+https://oakspec.dev/evidence.txt
+
+SCOPE
+
+  All tests below used one person's projects and agent sessions. Most
+  agent runs used one model family (GLM 5.3). Each test is a pilot. Read
+  the counts as descriptions, not as proof. Agent runs used Pi with tools
+  in a fresh Gondolin guest and no guest web access, unless noted.
+
+
+1. WHAT FAILS IN REAL MEMORY
+
+  Audit of three real projects (papercut, looper, barista), 2026-11-18.
+  46 verified defects in notes, agent memory, logs, and backlogs.
+
+  - Most were true when written. Nobody revisited them after a later
+    event: a release, a merged task, a controller start.
+  - A dated header ("Current state, 2026-11-13") was still wrong.
+    A date shows staleness. It does not cause an update.
+  - Writes got lost: notes stayed in task branches that never merged.
+
+  Mining of the author's archive of agent sessions: 12 clear memory
+  failures in 700 screened user corrections. Most were lost decisions or
+  stale tool workflows. Most memory rot is silent.
+
+
+2. EARLIER COMPARISONS (OAK V0.2 AND V0.3)
+
+  Papercut repository questions, 120 runs: accuracy 0.918 with OAK,
+  0.915 without. 24% fewer tool calls with OAK, not significant. The
+  study changed metadata, an index, and curated notes together.
+
+  Metadata versus equivalent prose, 24 sessions, and a 60-session
+  longitudinal pilot: both conditions passed every configuration check.
+  Tool calls were similar. The tasks were too easy to separate them.
+
+
+3. STALE NOTES ON REAL REPOSITORIES (E1)
+
+  48 runs on real repository snapshots, four conditions: notes as they
+  were, no notes, notes with YAML dates and checks, and the same facts in
+  sentences.
+
+  - Stale notes about derivable state (versions, task counts, whether a
+    task landed) caused no wrong actions in 24 runs. Agents checked git,
+    code, and data.
+  - A weaker model (GLM 5.3 Flash) followed a stale note in 1 of 18 runs.
+  - Notes changed the outcome only for facts the agent could not check,
+    for example tool paths on the developer's machine.
+  - YAML and sentences gave the same results.
+
+
+4. CLAIMS ABOUT ANOTHER MACHINE (E1B AND V0.4 CHECKS)
+
+  Six questions about the developer's machine, asked of an agent in a
+  sandbox that cannot reach it. Correct: report the note's value as
+  unverified, with its date.
+
+                                   correct   false verify
+  Notes as they were                12-15/30     12-14
+  Notes with a where field          18-19/30     11
+  Plain notes + rules R4-R6         27/30         2
+  Notes with where + rules R4-R6    28/30        0-2
+
+  The rows come from three batches. Each batch compared its conditions
+  under one seed. Without the rules, agents often ran a check in their
+  own sandbox and called a claim about the other machine verified. The
+  rules fixed this on plain notes that named the place in a sentence.
+
+
+5. SEVERAL AGENTS AT ONCE (E3)
+
+  36 rounds. Three agents worked in separate git worktrees, then merged.
+
+                               lost records   conflicts   round time
+  One shared NOTES.md                0            24          107 s
+  Topic files + index (v0.3)         0            24          230 s
+  New dated record files             0             6           52 s
+
+  No layout lost records through git merges. New record files cost the
+  least. Not tested: branches that never merge, and tools that overwrite
+  files outside git.
+
+
+6. V0.4 SETUP AND EDGE CASES
+
+  Setup from the v0.4 text on a real project, 3 runs: no note content
+  lost, no invented dates. One run reported edits that its files did not
+  contain. The self-check now reports from the files.
+
+  Deletion, a withdrawn approval, and an injected instruction: 8 of 9
+  runs passed with OAK, 9 of 9 without. These cases were too easy to
+  separate the conditions.
+
+
+7. WHAT THIS MEANS FOR OAK
+
+  - Short reading rules changed agent behavior more than any metadata.
+  - Copied derivable state is waste, not the main danger, for capable
+    agents.
+  - Notes earn their place for facts nobody can re-derive.
+  - YAML is one way to write the facts, not a requirement.
+
+  Open: other model families, decision loss when the note is the only
+  record, and loss outside git merges.
+
+END OF EVIDENCE

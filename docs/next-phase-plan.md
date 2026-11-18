@@ -51,7 +51,7 @@ cannot be re-derived, point to what can, and say where a claim applies.
 | E3 parallel writes | Done | [No loss through merges; append costs less](e3-parallel-writes-results.md) |
 | E2 decision loss | Not started | E1 suggests that notes matter only for facts that cannot be re-derived |
 | E4 check cost | Folded into E1b | Agents probe their own environment anyway |
-| v0.4 draft | [Candidate](oak-0001-v0.4-draft.txt) | [R4 to R6 replicated, and they work without metadata](v04-candidate-results.md) |
+| v0.4 draft | [Candidate](../publish/oak-0001.txt) | [R4 to R6 replicated, and they work without metadata](v04-candidate-results.md) |
 
 ## Experiments
 
