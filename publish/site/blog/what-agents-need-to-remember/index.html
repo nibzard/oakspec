@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>What agents need to remember</title>
+<meta name="description" content="OAK gives project knowledge a shared home. Our handoff tests helped us decide what belongs in the spec and what agents can work out for themselves.">
+<style>html { background: #fbfaf6; }
+body { max-width: 36rem; margin: 0 auto; padding: 3rem 1.25rem 5rem;
+  font: 17px/1.6 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+  "Times New Roman", serif; color: #1c1c1c; }
+header { margin-bottom: 2.5rem; }
+.meta, dt, code, pre, footer { font-family: ui-monospace, "SF Mono", Menlo,
+  Consolas, "Courier New", monospace; }
+.meta { font-size: .8rem; letter-spacing: .02em; color: #555; margin: 0; }
+h1 { font-size: 1.9rem; font-weight: normal; line-height: 1.2;
+  margin: .6rem 0 .4rem; }
+.sub { font-style: italic; margin: 0 0 1rem; }
+h2 { font-size: 1.1rem; margin: 2.6rem 0 .5rem; }
+h3 { font-size: 1rem; margin: 1.8rem 0 .4rem; }
+dd dl { margin: .4rem 0 .4rem; }
+dd p { margin: .4rem 0 0; }
+p, ul, ol, dl { margin: 0 0 1rem; }
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: .35rem; }
+li > p, li > pre { margin-top: .5rem; }
+dt { font-size: .88rem; font-weight: 600; margin-top: .8rem; }
+dd { margin: .1rem 0 0 1.4rem; }
+pre { font-size: .8rem; line-height: 1.45; background: #f1eee5;
+  padding: .8rem 1rem; overflow-x: auto; margin: 0 0 1rem; }
+a { color: #1a0dab; }
+a:visited { color: #551a8b; }
+hr { border: 0; border-top: 1px solid #ddd8cc; margin: 3rem 0 1rem; }
+footer { font-size: .8rem; color: #555; }
+
+figure.chart { margin: 2rem 0; }
+figure.chart .plot { overflow-x: auto; }
+figure.chart svg { width: 100%; min-width: 520px; height: auto; display: block; }
+figure.chart figcaption { font-size: .85rem; color: #55534d; margin-top: .4rem; }
+figure.chart details { font-size: .8rem; margin-top: .4rem; }
+figure.chart table { border-collapse: collapse; margin-top: .4rem; }
+figure.chart th, figure.chart td { text-align: left; padding: .15rem .8rem .15rem 0;
+  border-bottom: 1px solid #e4e0d5; font-weight: normal; }
+figure.chart th { color: #55534d; }
+.quote { border-left: 3px solid #ddd8cc; margin: 1rem 0; padding: .1rem 0 .1rem 1rem; }
+.quote p { margin: 0 0 .3rem; }
+.quote .who { font-family: ui-monospace, Menlo, monospace; font-size: .78rem; color: #55534d; }
+.posts { list-style: none; padding: 0; }
+.posts li { margin-bottom: 1.4rem; }
+.posts .meta { display: block; }
+</style>
+</head>
+<body>
+<header>
+<p class="meta"><a href="/">OAK-0001</a> · <a href="/blog/">Blog</a> · <a href="/evidence.txt">Evidence</a></p>
+<p class="meta">2026-11-19</p><h1>What agents need to remember</h1><p class="sub">OAK gives project knowledge a shared home. Our handoff tests helped us decide what belongs in the spec and what agents can work out for themselves.</p>
+</header>
+<main>
+<ol>
+<li><strong>Give unique knowledge a home.</strong> Save decisions and context
+a future agent cannot recover. Point to the source for facts it can check.</li>
+<li><strong>Make the meaning clear.</strong> Say who supplied the information,
+where it applies, and which earlier decision it replaces, if any.</li>
+<li><strong>Confirm receipt.</strong> Check that the next reader can reach
+the intended version in the shared location.</li>
+</ol>
+
+<p>These are the ideas behind Open Agent Knowledge. To try it, give your
+agent the <a href="/oak-0001.txt">single-file OAK specification</a> and ask
+it to set up or maintain your project's knowledge. The file includes setup
+steps for projects that already have notes.</p>
+
+<h2>What belongs in that shared home?</h2>
+
+<p>A project specification says what to make. The repository and its live
+systems show what exists. The context around that work can be harder to
+recover. Why did the editor move the release? Who approved the exception?
+Did it apply to a preview or to public publication?</p>
+
+<p>Say an editor approves a preview before anyone updates the publishing
+settings. That distinction tripped up an agent in a simulated handoff about
+a staging export. It treated the disabled setting as evidence that approval
+had ended. The next agent left the approved work undone. The setting was
+accurate. The note's account of the decision was wrong.</p>
+
+<p>I'd record the approval, who gave it, and where it applies. If the editor
+withdraws it, I'd keep the original record, link the withdrawal to it,
+and update the note that tells the next reader what applies now. For the
+current publishing state, I'd point the reader to the configuration.
+The same distinction matters when a note describes a remote machine. A
+check on your laptop tells you about your laptop.</p>
+
+<h2>What the tests persuaded me to keep</h2>
+
+<p>Agents answered repository questions at about the same rate with and
+without OAK. When they could check code or Git history, they usually did.
+Notes mattered more when the owner's decision was available only through
+the handoff. Plain Markdown also carried the approval through once we
+gave decisions and observed settings separate places.</p>
+
+<p>File layout helped with another problem. Independent agents editing one
+shared file were more likely to hit a merge conflict. Separate plain
+Markdown and OAK records both merged cleanly in a follow-up. That gives
+me a practical default. Use readable notes, and let concurrent writers
+add separate records. Add a machine-readable field when tools have a
+specific job for it. <a href="/evidence.txt">Pilot evidence</a></p>
+
+<p>The delivery test made the last rule concrete. We simulated a decision
+stuck in an unmerged worktree and a stale import that overwrote a newer
+decision. When the host checked the recipient's copy and restored the
+intended file, the next agent used the current approval. Without that
+check, it followed the old hold. Both note formats behaved the same.
+The test assumed the host knew where to look and still had the sender's
+copy.</p>
+
+<h2>What should get easier as models improve?</h2>
+
+<p>My reading of Rich Sutton's Bitter Lesson is that we should expect models
+to get better at finding evidence and working through inconsistencies.
+Give them room to choose how they search and reason. Spend our effort
+preserving the facts they would otherwise have to guess. A smarter agent
+may need less help reading a note. It still needs the editor's decision
+to reach its worktree.
+<a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">The Bitter Lesson</a></p>
+
+<p>That's the job I want one specification file to do. It gives agents
+shared rules for what to keep, how to read it, and how to check that it
+arrived. For the next version, I'd test whether a stable record identifier
+helps two independent tools find the same decision after a rename or
+transfer. That would give any extra structure a clear reason to be there.</p>
+
+</main>
+<hr>
+<footer>Open Agent Knowledge. Spec: <a href="/oak-0001.txt">https://oakspec.dev/oak-0001.txt</a></footer>
+</body>
+</html>

@@ -2,6 +2,58 @@
 
 ## 2026-11-19
 
+- In two simulated delivery failures, all checked handoffs recovered
+  the intended decision, and all unchecked handoffs used the stale
+  decision. The result held with and without a Markdown header.
+  [Delivery check](/notes/2026-11-19-oak-bench-delivery.md)
+
+- The v1 decision brief separates preserving unique facts from choosing
+  a file format. The next open question is whether a record header or a
+  delivery check adds value beyond structured Markdown and Git.
+  [Decision brief](docs/oak-v1-decision-brief.md)
+
+- Two concurrent writers caused one conflict in a shared Markdown
+  file. Separate Markdown and OAK records merged cleanly, and all
+  three readers recovered both decisions.
+  [Concurrent handoff](/notes/2026-11-19-oak-bench-concurrent-handoff.md)
+
+- Structured Markdown passed both Riverport replays and tied OAK on
+  the Maplewood maintenance variant. Separating decisions from observed
+  settings is a stronger baseline than free-form plain notes.
+  [Follow-up](/notes/2026-11-19-oak-bench-structured-notes.md)
+
+- In one maintenance handoff with GLM 5.3, OAK preserved the active
+  staging approval and plain notes marked it superseded after checking
+  disabled settings. OAK passed the final action checks, but its
+  maintainer replaced the original dated record.
+  [Maintenance handoff](/notes/2026-11-19-oak-bench-maintenance.md)
+
+- OAK-Bench calibration with GLM 5.3 found an approval handoff failure.
+  Notes recorded the restoration, but the final agent cited the disabled
+  configuration as evidence that the work lacked approval. A reader-only
+  or writer-only clarification did not fix that checkpoint. Explicitly
+  assigning the configuration change to the final agent passed in one
+  replay. State task authority separately from the approval facts.
+  [Calibration notes](/notes/2026-11-19-oak-bench-calibration.md)
+
+- The first OAK-Bench smoke run showed that an earlier test export can
+  contaminate the final score. Reset simulated settings and outputs at
+  session boundaries and keep raw snapshots for review. The clean
+  four-session Pi run with GLM 5.3 passed with plain Markdown notes.
+  [Smoke notes](/notes/2026-11-19-oak-bench-smoke.md)
+
+- Reviewed the proposal for an OAK benchmark against the published pilots.
+  The 60-session handoff pilot already provides a runner and three histories.
+  It compared metadata with equivalent prose and reached the ceiling on
+  configuration checks. The scope pilot's prompt defined verification using
+  the agent's own environment, which could favor rules that correct that
+  wording. Open question: does OAK improve handoff behavior over good plain
+  notes with the same guidance, when decisions change and the task prompt
+  does not define verification?
+  [Evidence](publish/evidence.txt) |
+  [Handoff pilot](oak-eval/longitudinal/README.md) |
+  [Dwarkesh Patel's essay](https://www.dwarkesh.com/p/rsi)
+
 - Added the project mark, "The Keeping Oak", in `brand/`. One seeded oak
   geometry feeds the 4K artwork, the medallion mark, the favicons, and a
   one-ink print mark. `@napi-rs/canvas` renders it in Node in about 30

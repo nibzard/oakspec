@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The Keeping Oak</title>
+<link rel="icon" href="out/favicon.ico">
+<style>
+  body { margin: 0; background: #0f0d15; color: #e9dfcb; font: 15px/1.5 Georgia, serif; }
+  header { padding: 14px 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button { background: #2c2738; color: inherit; border: 1px solid #574b66; padding: 6px 12px; cursor: pointer; }
+  canvas { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+</style>
+<header>
+  <strong>The Keeping Oak</strong>
+  <button data-kind="hero">Artwork 3840×2160</button>
+  <button data-kind="mark">Mark 2048</button>
+  <button data-kind="icon">Favicon 32</button>
+  <button data-kind="mono">Print mark 2048</button>
+  <button id="save" disabled>Export PNG</button>
+  <span id="status"></span>
+</header>
+<main id="stage"></main>
+<script type="module">
+  import { renderHero, renderMark, renderIcon, renderMono } from './oak.js';
+  const mk = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
+  const jobs = {
+    hero: () => renderHero(mk, 3840, 2160),
+    mark: () => renderMark(mk, 2048),
+    icon: () => renderIcon(mk, 32),
+    mono: () => renderMono(mk, 2048),
+  };
+  const status = document.getElementById('status'), save = document.getElementById('save');
+  let current = null, name = '';
+  async function draw(kind) {
+    status.textContent = 'Drawing…'; save.disabled = true;
+    await new Promise((r) => setTimeout(r, 30));
+    const t = performance.now();
+    current = jobs[kind](); name = `oak-${kind}.png`;
+    if (kind === 'icon') current.style.width = '256px', current.style.imageRendering = 'pixelated';
+    document.getElementById('stage').replaceChildren(current);
+    status.textContent = `Done in ${((performance.now() - t) / 1000).toFixed(1)} s`;
+    save.disabled = false;
+  }
+  document.querySelectorAll('[data-kind]').forEach((b) => (b.onclick = () => draw(b.dataset.kind)));
+  save.onclick = () => current.toBlob((blob) => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  }, 'image/png');
+  draw('hero');
+</script>
