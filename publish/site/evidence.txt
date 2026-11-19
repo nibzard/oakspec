@@ -64,10 +64,20 @@ SCOPE
   Plain notes + rules R4-R6         27/30         2
   Notes with where + rules R4-R6    28/30        0-2
 
-  The rows come from three batches. Each batch compared its conditions
-  under one seed. Without the rules, agents often ran a check in their
-  own sandbox and called a claim about the other machine verified. The
-  rules fixed this on plain notes that named the place in a sentence.
+  The rows come from four batches. Each batch compared its conditions
+  under one seed. Not every batch ran every condition: E1b ran four
+  forms of notes without the rules (two more not shown here: 14 and 11
+  false verifications), and the candidate check ran only the rules.
+  Without the rules, agents often ran a check in their own sandbox and
+  called a claim about the other machine verified. The rules fixed this
+  on plain notes that named the place in a sentence.
+
+  The zcode question: 35 of 35 runs without the rules were false
+  verifications, and 20 of 20 runs with the rules were correct.
+
+  Caveat: every task prompt defined "verified" as "you checked the
+  values in your environment". That wording invites the error in every
+  condition. Rule R6 replaces it with "checked in its scope".
 
 
 5. SEVERAL AGENTS AT ONCE (E3)

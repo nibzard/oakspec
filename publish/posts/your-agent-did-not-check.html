@@ -184,6 +184,31 @@ note is the only evidence, so the note must say where the fact applies. So OAK's
 rule is now: keep what cannot be re-derived, point to what can, and say where a
 claim applies.</p>
 
+<h2>How we ran it</h2>
+
+<p>The agent was <a href="https://github.com/earendil-works/pi">Pi</a> 1.5.2, a
+coding agent with read, write, edit, and bash tools. The model was GLM 5.3
+through the Z.ai provider, at the low thinking level. The weaker model in the
+stale-note test was GLM 5.3 Flash. We ran Pi in print mode with JSON output and
+turned off its sessions, extensions, MCP servers, skills, prompt templates, and
+context files. So Pi did not load <code>AGENTS.md</code> or any other file on
+its own. An agent saw the notes and the rules only if it opened
+<code>KNOWLEDGE.md</code> itself.</p>
+
+<p>The sandbox was <a href="https://github.com/earendil-works/gondolin">Gondolin</a>
+0.14.0, which runs local Linux micro-VMs (here QEMU with KVM). We loaded
+Gondolin's example Pi extension, which runs Pi's four tools inside the VM
+instead of on the host. The model calls came from Pi on the host. Only the tool
+calls ran in the VM. The extension mounts the project copy at
+<code>/workspace</code>, allows no web hosts, and does not pass the host's
+environment or API keys into the VM. The guest image was Alpine Linux 3.23,
+which we built with <code>gondolin build</code> to add git and jq.</p>
+
+<p>Each run got a fresh copy of the project and a new VM, with a 20-minute
+limit. Before each batch, we froze the inputs and recorded their sha256 hashes.
+A script outside the VM scored <code>answer.json</code> against an answer key
+that the agent could not see.</p>
+
 <h2>Limits</h2>
 
 <ul>
