@@ -5,6 +5,8 @@ A plain-text convention for memory that people and AI agents share.
 - Spec (published): https://oakspec.dev, plain text at
   https://oakspec.dev/oak-0001.txt
 - Spec source: `publish/oak-0001.txt`
+- Evidence summary: `publish/evidence.txt` (https://oakspec.dev/evidence.txt)
+- Blog posts: `publish/posts/*.html`, built by `publish/blog.py` (https://oakspec.dev/blog/)
 - Long-form RFC draft with design notes: `RFC.md`
 - Evaluation suite and harness: `oak-eval/`
 - Test plan for the time test: `docs/test-plan-time.md`

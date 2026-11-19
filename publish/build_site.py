@@ -22,6 +22,8 @@ import re
 import shutil
 from pathlib import Path
 
+import blog
+
 HERE = Path(__file__).resolve().parent
 SPEC = HERE / "oak-0001.txt"
 SITE = HERE / "site"
@@ -32,6 +34,35 @@ NESTED_RE = re.compile(r"^ {8}(\S+)\s{2,}(\S.*)$")
 TERM_RE = re.compile(r"^  (\S(?:.{0,22}?\S)?)\s{2,}(\S.*)$")
 STEP_RE = re.compile(r"^\s{2,4}(\d+)\.\s+(.*)$")
 SUBSTEP_RE = re.compile(r"^\s{5,}([a-z])\.\s+(.*)$")
+
+BASE_CSS = """html { background: #fbfaf6; }
+body { max-width: 36rem; margin: 0 auto; padding: 3rem 1.25rem 5rem;
+  font: 17px/1.6 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+  "Times New Roman", serif; color: #1c1c1c; }
+header { margin-bottom: 2.5rem; }
+.meta, dt, code, pre, footer { font-family: ui-monospace, "SF Mono", Menlo,
+  Consolas, "Courier New", monospace; }
+.meta { font-size: .8rem; letter-spacing: .02em; color: #555; margin: 0; }
+h1 { font-size: 1.9rem; font-weight: normal; line-height: 1.2;
+  margin: .6rem 0 .4rem; }
+.sub { font-style: italic; margin: 0 0 1rem; }
+h2 { font-size: 1.1rem; margin: 2.6rem 0 .5rem; }
+h3 { font-size: 1rem; margin: 1.8rem 0 .4rem; }
+dd dl { margin: .4rem 0 .4rem; }
+dd p { margin: .4rem 0 0; }
+p, ul, ol, dl { margin: 0 0 1rem; }
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: .35rem; }
+li > p, li > pre { margin-top: .5rem; }
+dt { font-size: .88rem; font-weight: 600; margin-top: .8rem; }
+dd { margin: .1rem 0 0 1.4rem; }
+pre { font-size: .8rem; line-height: 1.45; background: #f1eee5;
+  padding: .8rem 1rem; overflow-x: auto; margin: 0 0 1rem; }
+a { color: #1a0dab; }
+a:visited { color: #551a8b; }
+hr { border: 0; border-top: 1px solid #ddd8cc; margin: 3rem 0 1rem; }
+footer { font-size: .8rem; color: #555; }
+"""
 
 PAGE = """<!doctype html>
 <html lang="en">
@@ -83,7 +114,7 @@ footer {{ font-size: .8rem; color: #555; }}
 {body}
 </main>
 <hr>
-<footer>End of OAK-0001. <a href="/oak-0001.txt">Plain text</a>.</footer>
+<footer>End of OAK-0001. <a href="/oak-0001.txt">Plain text</a> · <a href="/evidence.txt">Evidence</a> · <a href="/blog/">Blog</a>.</footer>
 </body>
 </html>
 """
@@ -97,6 +128,7 @@ To set up OAK memory, read the spec and follow Section 8 (Set up):
 - [OAK-0001 (plain text)]({url}/oak-0001.txt)
 - [Evidence behind the spec]({url}/evidence.txt)
 - [Previous version, v0.3]({url}/oak-0001-v0.3.txt)
+- [Blog]({url}/blog/)
 """
 
 
@@ -276,6 +308,7 @@ def main():
     for extra in ("oak-0001-v0.3.txt", "evidence.txt"):
         shutil.copy2(HERE / extra, SITE / extra)
     (SITE / "llms.txt").write_text(LLMS.format(url=URL))
+    blog.build(SITE, BASE_CSS, URL)
     print(f"wrote {SITE}")
 
 

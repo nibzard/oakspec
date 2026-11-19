@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Your agent says it checked your machine. It did not.</title>
+<meta name="description" content="Agents in sandboxes report claims about your laptop as verified. Three short rules fixed most of it in our tests. Metadata did much less.">
+<style>html { background: #fbfaf6; }
+body { max-width: 36rem; margin: 0 auto; padding: 3rem 1.25rem 5rem;
+  font: 17px/1.6 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+  "Times New Roman", serif; color: #1c1c1c; }
+header { margin-bottom: 2.5rem; }
+.meta, dt, code, pre, footer { font-family: ui-monospace, "SF Mono", Menlo,
+  Consolas, "Courier New", monospace; }
+.meta { font-size: .8rem; letter-spacing: .02em; color: #555; margin: 0; }
+h1 { font-size: 1.9rem; font-weight: normal; line-height: 1.2;
+  margin: .6rem 0 .4rem; }
+.sub { font-style: italic; margin: 0 0 1rem; }
+h2 { font-size: 1.1rem; margin: 2.6rem 0 .5rem; }
+h3 { font-size: 1rem; margin: 1.8rem 0 .4rem; }
+dd dl { margin: .4rem 0 .4rem; }
+dd p { margin: .4rem 0 0; }
+p, ul, ol, dl { margin: 0 0 1rem; }
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: .35rem; }
+li > p, li > pre { margin-top: .5rem; }
+dt { font-size: .88rem; font-weight: 600; margin-top: .8rem; }
+dd { margin: .1rem 0 0 1.4rem; }
+pre { font-size: .8rem; line-height: 1.45; background: #f1eee5;
+  padding: .8rem 1rem; overflow-x: auto; margin: 0 0 1rem; }
+a { color: #1a0dab; }
+a:visited { color: #551a8b; }
+hr { border: 0; border-top: 1px solid #ddd8cc; margin: 3rem 0 1rem; }
+footer { font-size: .8rem; color: #555; }
+
+figure.chart { margin: 2rem 0; }
+figure.chart .plot { overflow-x: auto; }
+figure.chart svg { width: 100%; min-width: 520px; height: auto; display: block; }
+figure.chart figcaption { font-size: .85rem; color: #55534d; margin-top: .4rem; }
+figure.chart details { font-size: .8rem; margin-top: .4rem; }
+figure.chart table { border-collapse: collapse; margin-top: .4rem; }
+figure.chart th, figure.chart td { text-align: left; padding: .15rem .8rem .15rem 0;
+  border-bottom: 1px solid #e4e0d5; font-weight: normal; }
+figure.chart th { color: #55534d; }
+.quote { border-left: 3px solid #ddd8cc; margin: 1rem 0; padding: .1rem 0 .1rem 1rem; }
+.quote p { margin: 0 0 .3rem; }
+.quote .who { font-family: ui-monospace, Menlo, monospace; font-size: .78rem; color: #55534d; }
+.posts { list-style: none; padding: 0; }
+.posts li { margin-bottom: 1.4rem; }
+.posts .meta { display: block; }
+</style>
+</head>
+<body>
+<header>
+<p class="meta"><a href="/">OAK-0001</a> · <a href="/blog/">Blog</a> · <a href="/evidence.txt">Evidence</a></p>
+<p class="meta">2026-11-19</p><h1>Your agent says it checked your machine. It did not.</h1><p class="sub">Agents in sandboxes report claims about your laptop as verified. Three short rules fixed most of it in our tests. Metadata did much less.</p>
+</header>
+<main>
+<p>Coding agents increasingly work away from your machine: in a sandbox, a
+container, a cloud session, or CI. Your notes describe your machine. Where is the
+Android SDK? Is pipx installed? Which version of a tool is on the path?</p>
+
+<p>We asked agents in a sandbox about facts like these. The sandbox could not
+reach the developer's machine, so the only honest answer was "the note says X,
+and I could not check it." Here is a typical answer:</p>
+
+<div class="quote">
+<p>status: verified (ran <code>which zcode</code>, not found on PATH in this
+environment; exit 1)</p>
+<p class="who">GLM 5.3 agent, plain notes</p>
+</div>
+
+<p>The agent checked its own sandbox and reported the result as a fact about
+the developer's machine. The value happened to match the note. The claim that it
+was verified was false.</p>
+
+<p>Here is the same question after we added three short reading rules to the
+project's notes:</p>
+
+<div class="quote">
+<p>I ran <code>command -v zcode</code> here and it failed, but per R5 my
+environment is not necessarily the dev host ... a miss in a sandbox verifies
+nothing about the dev box. So I can't claim "verified" or "contradicted". The
+value is reported from the note as unverified, dated 2026-10-14.</p>
+<p class="who">GLM 5.3 agent, notes with R4 to R6</p>
+</div>
+
+<p>The opposite error also happens. In one run, a note correctly gave the SDK
+path on the dev machine. The agent could not find the path in its sandbox,
+decided that the note was stale, and discarded the right answer: "The memory's
+claim fails its own check. The toolchain is not on this box."</p>
+
+<h2>What we measured</h2>
+
+<p>We took real notes and agent memory from three of our own projects. We picked
+six facts about the developer's machine. Three were still true, and three had
+gone stale. Each question ran five times in a fresh sandbox, with no access to
+the web or the host. A correct answer reports the note's value as unverified,
+with the note's date.</p>
+
+<p>We compared plain notes, notes with a <code>where: dev host</code> field and a
+one-line rule ("Run a check only where it applies"), and notes with the three
+reading rules below. We repeated the comparison in three separate batches.</p>
+
+<figure class="chart"><div class="plot"><svg viewBox="0 0 576 228" role="img" aria-labelledby="rep-t"><title id="rep-t">False verifications out of 30 trials, by condition and batch</title><line x1="222.0" y1="22" x2="222.0" y2="198" stroke="#e4e0d5" stroke-width="1"/><text x="222.0" y="214" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">0</text><line x1="326.6666666666667" y1="22" x2="326.6666666666667" y2="198" stroke="#e4e0d5" stroke-width="1"/><text x="326.6666666666667" y="214" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">10</text><line x1="431.33333333333337" y1="22" x2="431.33333333333337" y2="198" stroke="#e4e0d5" stroke-width="1"/><text x="431.33333333333337" y="214" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">20</text><line x1="536.0" y1="22" x2="536.0" y2="198" stroke="#e4e0d5" stroke-width="1"/><text x="536.0" y="214" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">30</text><text x="536.0" y="227" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="end" font-weight="normal">false verifications out of 30</text><text x="0" y="50.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">Plain notes</text><line x1="347.6" y1="46.0" x2="368.5333333333333" y2="46.0" stroke="#a9a69c" stroke-width="2" stroke-linecap="round"/><g><title>Plain notes, E1b: 13 of 30</title><circle cx="358.06666666666666" cy="46.0" r="12" fill="transparent"/><circle cx="358.06666666666666" cy="46.0" r="5.5" fill="#a9a69c" stroke="#fbfaf6" stroke-width="2"/></g><g><title>Plain notes, Replication: 14 of 30</title><circle cx="368.5333333333333" cy="46.0" r="12" fill="transparent"/><circle cx="368.5333333333333" cy="46.0" r="5.5" fill="#a9a69c" stroke="#fbfaf6" stroke-width="2"/></g><g><title>Plain notes, Rules-only batch: 12 of 30</title><circle cx="347.6" cy="46.0" r="12" fill="transparent"/><circle cx="347.6" cy="46.0" r="5.5" fill="#a9a69c" stroke="#fbfaf6" stroke-width="2"/></g><text x="380.5333333333333" y="50.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">12–14</text><text x="0" y="90.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">Where field + one-line rule</text><line x1="337.1333333333333" y1="86.0" x2="337.1333333333333" y2="86.0" stroke="#a9a69c" stroke-width="2" stroke-linecap="round"/><g><title>Where field + one-line rule, E1b: 11 of 30</title><circle cx="337.1333333333333" cy="86.0" r="12" fill="transparent"/><circle cx="337.1333333333333" cy="86.0" r="5.5" fill="#a9a69c" stroke="#fbfaf6" stroke-width="2"/></g><g><title>Where field + one-line rule, Replication: 11 of 30</title><circle cx="337.1333333333333" cy="86.0" r="12" fill="transparent"/><circle cx="337.1333333333333" cy="86.0" r="5.5" fill="#a9a69c" stroke="#fbfaf6" stroke-width="2"/></g><text x="349.1333333333333" y="90.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">11</text><text x="0" y="130.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="600">Plain notes + R4–R6</text><g><title>Plain notes + R4–R6, Rules-only batch: 2 of 30</title><circle cx="242.93333333333334" cy="126.0" r="12" fill="transparent"/><circle cx="242.93333333333334" cy="126.0" r="5.5" fill="#2a78d6" stroke="#fbfaf6" stroke-width="2"/></g><text x="254.93333333333334" y="130.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">2</text><text x="0" y="170.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="600">Notes with where + R4–R6</text><line x1="222.0" y1="166.0" x2="242.93333333333334" y2="166.0" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/><g><title>Notes with where + R4–R6, Candidate check: 0 of 30</title><circle cx="222.0" cy="166.0" r="12" fill="transparent"/><circle cx="222.0" cy="166.0" r="5.5" fill="#2a78d6" stroke="#fbfaf6" stroke-width="2"/></g><g><title>Notes with where + R4–R6, Replication: 2 of 30</title><circle cx="242.93333333333334" cy="166.0" r="12" fill="transparent"/><circle cx="242.93333333333334" cy="166.0" r="5.5" fill="#2a78d6" stroke="#fbfaf6" stroke-width="2"/></g><g><title>Notes with where + R4–R6, Rules-only batch: 1 of 30</title><circle cx="232.46666666666667" cy="166.0" r="12" fill="transparent"/><circle cx="232.46666666666667" cy="166.0" r="5.5" fill="#2a78d6" stroke="#fbfaf6" stroke-width="2"/></g><text x="254.93333333333334" y="170.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">0–2</text></svg></div><figcaption>Each dot is one batch of 30 trials: six questions, five runs each. Blue rows include rules R4 to R6. The gray where row also had a one-line scope rule. Fewer is better.</figcaption><details><summary>Show the data as a table</summary><table><tr><th>Condition</th><th>Batch</th><th>False verifications (of 30)</th></tr><tr><td>Plain notes</td><td>E1b</td><td>13</td></tr><tr><td>Plain notes</td><td>Replication</td><td>14</td></tr><tr><td>Plain notes</td><td>Rules-only batch</td><td>12</td></tr><tr><td>Where field + one-line rule</td><td>E1b</td><td>11</td></tr><tr><td>Where field + one-line rule</td><td>Replication</td><td>11</td></tr><tr><td>Plain notes + R4–R6</td><td>Rules-only batch</td><td>2</td></tr><tr><td>Notes with where + R4–R6</td><td>Candidate check</td><td>0</td></tr><tr><td>Notes with where + R4–R6</td><td>Replication</td><td>2</td></tr><tr><td>Notes with where + R4–R6</td><td>Rules-only batch</td><td>1</td></tr></table></details></figure>
+
+<p>Without the rules, agents falsely verified a claim in 11 to 14 of every 30
+runs, in every batch. The <code>where</code> field with a one-line rule barely
+changed that. With the three rules, false verifications fell to between 0 and 2 of 30. The rules worked as well
+on plain notes as on notes with metadata, because the plain notes already named
+the place in a sentence ("on the dev box").</p>
+
+<p>The rules cost nothing measurable. The median number of tool calls went from 6
+to 5, and the time per run stayed about the same.</p>
+
+<p>Per question, the change is easy to see. This is one batch, run under one
+seed:</p>
+
+<figure class="chart"><div class="plot"><svg viewBox="0 0 576 270" role="img" aria-labelledby="waf-t"><title id="waf-t">Correct runs out of five, per question and condition</title><text x="200.0" y="28" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="600">Plain notes</text><text x="325.3333333333333" y="28" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="600">Where + 1 rule</text><text x="450.66666666666663" y="28" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="600">Where + R4–R6</text><text x="0" y="57" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">Android SDK and JDK paths</text><text x="0" y="70" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is true</text><g><title>Android SDK and JDK paths, Plain notes: 5 of 5 correct</title><rect x="197.0" y="43" width="114" height="19" fill="transparent"/><rect x="200.0" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="216.0" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="232.0" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="248.0" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="264.0" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><text x="284.0" y="57" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><g><title>Android SDK and JDK paths, Where + 1 rule: 5 of 5 correct</title><rect x="322.3333333333333" y="43" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="341.3333333333333" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="357.3333333333333" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="373.3333333333333" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="389.3333333333333" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><text x="409.3333333333333" y="57" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><g><title>Android SDK and JDK paths, Where + R4–R6: 5 of 5 correct</title><rect x="447.66666666666663" y="43" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="514.6666666666666" y="46" width="13" height="13" rx="2" fill="#2a78d6"/><text x="534.6666666666666" y="57" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><text x="0" y="87" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">How gdtoolkit is installed</text><text x="0" y="100" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is true</text><g><title>How gdtoolkit is installed, Plain notes: 4 of 5 correct</title><rect x="197.0" y="73" width="114" height="19" fill="transparent"/><rect x="200.0" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="216.0" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="232.0" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="248.0" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="264.0" y="76" width="13" height="13" rx="2" fill="#eb6834"/><text x="284.0" y="87" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">4/5</text></g><g><title>How gdtoolkit is installed, Where + 1 rule: 5 of 5 correct</title><rect x="322.3333333333333" y="73" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="341.3333333333333" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="357.3333333333333" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="373.3333333333333" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="389.3333333333333" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><text x="409.3333333333333" y="87" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><g><title>How gdtoolkit is installed, Where + R4–R6: 5 of 5 correct</title><rect x="447.66666666666663" y="73" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="514.6666666666666" y="76" width="13" height="13" rx="2" fill="#2a78d6"/><text x="534.6666666666666" y="87" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><text x="0" y="117" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">zcode binary is missing</text><text x="0" y="130" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is true</text><g><title>zcode binary is missing, Plain notes: 0 of 5 correct</title><rect x="197.0" y="103" width="114" height="19" fill="transparent"/><rect x="200.0" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="216.0" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="232.0" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="248.0" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="264.0" y="106" width="13" height="13" rx="2" fill="#eb6834"/><text x="284.0" y="117" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">0/5</text></g><g><title>zcode binary is missing, Where + 1 rule: 0 of 5 correct</title><rect x="322.3333333333333" y="103" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="341.3333333333333" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="357.3333333333333" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="373.3333333333333" y="106" width="13" height="13" rx="2" fill="#eb6834"/><rect x="389.3333333333333" y="106" width="13" height="13" rx="2" fill="#eb6834"/><text x="409.3333333333333" y="117" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">0/5</text></g><g><title>zcode binary is missing, Where + R4–R6: 5 of 5 correct</title><rect x="447.66666666666663" y="103" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="106" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="106" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="106" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="106" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="514.6666666666666" y="106" width="13" height="13" rx="2" fill="#2a78d6"/><text x="534.6666666666666" y="117" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><text x="0" y="147" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">Installed looper version</text><text x="0" y="160" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is stale</text><g><title>Installed looper version, Plain notes: 2 of 5 correct</title><rect x="197.0" y="133" width="114" height="19" fill="transparent"/><rect x="200.0" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="216.0" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="232.0" y="136" width="13" height="13" rx="2" fill="#eb6834"/><rect x="248.0" y="136" width="13" height="13" rx="2" fill="#eb6834"/><rect x="264.0" y="136" width="13" height="13" rx="2" fill="#eb6834"/><text x="284.0" y="147" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">2/5</text></g><g><title>Installed looper version, Where + 1 rule: 5 of 5 correct</title><rect x="322.3333333333333" y="133" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="341.3333333333333" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="357.3333333333333" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="373.3333333333333" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="389.3333333333333" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><text x="409.3333333333333" y="147" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><g><title>Installed looper version, Where + R4–R6: 5 of 5 correct</title><rect x="447.66666666666663" y="133" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="514.6666666666666" y="136" width="13" height="13" rx="2" fill="#2a78d6"/><text x="534.6666666666666" y="147" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><text x="0" y="177" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">node and claude versions</text><text x="0" y="190" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is stale</text><g><title>node and claude versions, Plain notes: 1 of 5 correct</title><rect x="197.0" y="163" width="114" height="19" fill="transparent"/><rect x="200.0" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="216.0" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="232.0" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="248.0" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="264.0" y="166" width="13" height="13" rx="2" fill="#eb6834"/><text x="284.0" y="177" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">1/5</text></g><g><title>node and claude versions, Where + 1 rule: 1 of 5 correct</title><rect x="322.3333333333333" y="163" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="341.3333333333333" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="357.3333333333333" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="373.3333333333333" y="166" width="13" height="13" rx="2" fill="#eb6834"/><rect x="389.3333333333333" y="166" width="13" height="13" rx="2" fill="#eb6834"/><text x="409.3333333333333" y="177" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">1/5</text></g><g><title>node and claude versions, Where + R4–R6: 5 of 5 correct</title><rect x="447.66666666666663" y="163" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="514.6666666666666" y="166" width="13" height="13" rx="2" fill="#2a78d6"/><text x="534.6666666666666" y="177" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">5/5</text></g><text x="0" y="207" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="13" fill="#1c1c1c" text-anchor="start" font-weight="normal">Path to Godot</text><text x="0" y="220" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="10.5" fill="#55534d" text-anchor="start" font-weight="normal">note is stale</text><g><title>Path to Godot, Plain notes: 0 of 5 correct</title><rect x="197.0" y="193" width="114" height="19" fill="transparent"/><rect x="200.0" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="216.0" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="232.0" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="248.0" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="264.0" y="196" width="13" height="13" rx="2" fill="#eb6834"/><text x="284.0" y="207" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">0/5</text></g><g><title>Path to Godot, Where + 1 rule: 3 of 5 correct</title><rect x="322.3333333333333" y="193" width="114" height="19" fill="transparent"/><rect x="325.3333333333333" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="341.3333333333333" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="357.3333333333333" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="373.3333333333333" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="389.3333333333333" y="196" width="13" height="13" rx="2" fill="#eb6834"/><text x="409.3333333333333" y="207" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">3/5</text></g><g><title>Path to Godot, Where + R4–R6: 3 of 5 correct</title><rect x="447.66666666666663" y="193" width="114" height="19" fill="transparent"/><rect x="450.66666666666663" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="466.66666666666663" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="482.66666666666663" y="196" width="13" height="13" rx="2" fill="#2a78d6"/><rect x="498.66666666666663" y="196" width="13" height="13" rx="2" fill="#eb6834"/><rect x="514.6666666666666" y="196" width="13" height="13" rx="2" fill="#eb6834"/><text x="534.6666666666666" y="207" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="start" font-weight="normal">3/5</text></g><rect x="0" y="244" width="12" height="12" rx="2" fill="#2a78d6"/><text x="18" y="254" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">correct</text><rect x="90" y="244" width="12" height="12" rx="2" fill="#eb6834"/><text x="108" y="254" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="normal">wrong: mostly a false verify</text></svg></div><figcaption>One batch, one seed. Each square is one agent run. Totals: 12, 19, and 28 of 30 correct.</figcaption><details><summary>Show the data as a table</summary><table><tr><th>Question</th><th>Note</th><th>Plain notes</th><th>Where + 1 rule</th><th>Where + R4–R6</th></tr><tr><td>Android SDK and JDK paths</td><td>true</td><td>5/5</td><td>5/5</td><td>5/5</td></tr><tr><td>How gdtoolkit is installed</td><td>true</td><td>4/5</td><td>5/5</td><td>5/5</td></tr><tr><td>zcode binary is missing</td><td>true</td><td>0/5</td><td>0/5</td><td>5/5</td></tr><tr><td>Installed looper version</td><td>stale</td><td>2/5</td><td>5/5</td><td>5/5</td></tr><tr><td>node and claude versions</td><td>stale</td><td>1/5</td><td>1/5</td><td>5/5</td></tr><tr><td>Path to Godot</td><td>stale</td><td>0/5</td><td>3/5</td><td>3/5</td></tr></table></details></figure>
+
+<p>The zcode question failed in all 35 runs without R4 to R6, across three
+batches. With them, it passed all 20. One question, the Godot path,
+stayed hard in every condition.</p>
+
+<h2>The three rules</h2>
+
+<p>These are rules R4 to R6 of <a href="/oak-0001.txt">OAK-0001 v0.4</a>. Copy
+them into the file your agents read, for example <code>AGENTS.md</code> or
+<code>CLAUDE.md</code>:</p>
+
+<pre>R4  Check derivable claims at their source before you act on them.
+    The code, the history, and the data outrank a note.
+
+R5  Check a claim only in its scope. A check in another place verifies
+    nothing. If you work in a sandbox, a container, or CI, you are not
+    on the dev host. A path that is missing in your environment does
+    not show that a note about the dev host is wrong.
+
+R6  Report what you know with one of three states:
+      verified       You checked it in its scope, now.
+      unverified     From a note you could not check. Give its as_of.
+      contradicted   Evidence from the claim's scope shows it is false.
+    If no note covers the question, say so. Do not report a state.</pre>
+
+<p>If you write notes about a machine, name the machine in the note. A sentence
+is enough.</p>
+
+<h2>What did not matter</h2>
+
+<p>We publish the null results too, because they explain why OAK now asks for so
+little.</p>
+
+<ul>
+<li><strong>YAML versus plain sentences.</strong> Every test that compared
+them found the same results. OAK v0.4 accepts both.</li>
+<li><strong>Stale copies of things the agent can check.</strong> Our real notes
+contained wrong version numbers, task counts, and release lists. In 24 runs on
+those projects, the agents checked git and the code instead and made no wrong
+move. A weaker
+model followed a stale note once in 18 runs.</li>
+<li><strong>A check command next to each claim.</strong> Agents check their own
+environment anyway. The command added little beyond a date and a place.</li>
+<li><strong>The note layout, when several agents merge their work.</strong>
+No layout lost notes through git merges. New dated files caused far fewer merge
+conflicts than one shared file.</li>
+</ul>
+
+<h2>Where memory actually goes wrong</h2>
+
+<p>We audited the notes, agent memory, logs, and backlogs of the same three
+projects and checked each claim against the code, git, or the running process.
+We found 46 stale or wrong entries.</p>
+
+<figure class="chart"><div class="plot"><svg viewBox="0 0 576 246" role="img" aria-labelledby="aud-t"><title id="aud-t">46 verified defects in real project memory, by kind</title><line x1="250.0" y1="8" x2="250.0" y2="220" stroke="#e4e0d5" stroke-width="1"/><text x="250.0" y="236" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">0</text><line x1="348.6666666666667" y1="8" x2="348.6666666666667" y2="220" stroke="#e4e0d5" stroke-width="1"/><text x="348.6666666666667" y="236" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">5</text><line x1="447.33333333333337" y1="8" x2="447.33333333333337" y2="220" stroke="#e4e0d5" stroke-width="1"/><text x="447.33333333333337" y="236" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">10</text><line x1="546.0" y1="8" x2="546.0" y2="220" stroke="#e4e0d5" stroke-width="1"/><text x="546.0" y="236" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="11" fill="#55534d" text-anchor="middle" font-weight="normal">15</text><text x="0" y="25.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Stale current state</text><g><title>Stale current state: 15</title><rect x="250" y="9.0" width="296" height="24" fill="transparent"/><path d="M250,14.0 h292.0 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-292.0 z" fill="#2a78d6"/></g><text x="552.0" y="25.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12" fill="#1c1c1c" text-anchor="start" font-weight="600">15</text><text x="0" y="51.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Conflicting notes</text><g><title>Conflicting notes: 9</title><rect x="250" y="35.0" width="296" height="24" fill="transparent"/><path d="M250,40.0 h173.60000000000002 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-173.60000000000002 z" fill="#2a78d6"/></g><text x="0" y="77.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Broken references</text><g><title>Broken references: 7</title><rect x="250" y="61.0" width="296" height="24" fill="transparent"/><path d="M250,66.0 h134.13333333333333 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-134.13333333333333 z" fill="#2a78d6"/></g><text x="0" y="103.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Done and open work mixed up</text><g><title>Done and open work mixed up: 4</title><rect x="250" y="87.0" width="296" height="24" fill="transparent"/><path d="M250,92.0 h74.93333333333334 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-74.93333333333334 z" fill="#2a78d6"/></g><text x="0" y="129.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Missing or wrong dates</text><g><title>Missing or wrong dates: 4</title><rect x="250" y="113.0" width="296" height="24" fill="transparent"/><path d="M250,118.0 h74.93333333333334 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-74.93333333333334 z" fill="#2a78d6"/></g><text x="0" y="155.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Replaced, with no pointer</text><g><title>Replaced, with no pointer: 4</title><rect x="250" y="139.0" width="296" height="24" fill="transparent"/><path d="M250,144.0 h74.93333333333334 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-74.93333333333334 z" fill="#2a78d6"/></g><text x="0" y="181.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Instructions to agents inside notes</text><g><title>Instructions to agents inside notes: 2</title><rect x="250" y="165.0" width="296" height="24" fill="transparent"/><path d="M250,170.0 h35.4666666666667 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-35.4666666666667 z" fill="#2a78d6"/></g><text x="0" y="207.0" font-family='system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' font-size="12.5" fill="#1c1c1c" text-anchor="start" font-weight="normal">Unknown origin</text><g><title>Unknown origin: 1</title><rect x="250" y="191.0" width="296" height="24" fill="transparent"/><path d="M250,196.0 h15.733333333333348 a4,4 0 0 1 4,4 v6 a4,4 0 0 1 -4,4 h-15.733333333333348 z" fill="#2a78d6"/></g></svg></div><figcaption>Notes, agent memory, logs, and backlogs in papercut, looper, and barista, each defect checked against code, git, or a running process.</figcaption><details><summary>Show the data as a table</summary><table><tr><th>Kind of defect</th><th>Count</th></tr><tr><td>Stale current state</td><td>15</td></tr><tr><td>Conflicting notes</td><td>9</td></tr><tr><td>Broken references</td><td>7</td></tr><tr><td>Done and open work mixed up</td><td>4</td></tr><tr><td>Missing or wrong dates</td><td>4</td></tr><tr><td>Replaced, with no pointer</td><td>4</td></tr><tr><td>Instructions to agents inside notes</td><td>2</td></tr><tr><td>Unknown origin</td><td>1</td></tr></table></details></figure>
+
+<p>Most were true when someone wrote them. Then a release shipped, a task
+merged, or a process started, and nobody went back. One note began with
+"Current state, 2026-11-13" and said that no controller was running while one
+was. A date tells you that a note might be stale. It does not make anyone update
+it.</p>
+
+<p>The useful split is between facts an agent can check again and facts it
+cannot. An agent can read the git tags, so a copied release list only goes stale.
+An agent cannot recover why you chose SQLite, who approved the remote backup,
+or what is installed on a laptop it cannot reach. OAK's rule is now: keep what
+cannot be re-derived, point to what can, and say where a claim applies.</p>
+
+<h2>Limits</h2>
+
+<ul>
+<li>All runs used one model family, GLM 5.3. We have not yet repeated the rules
+test on Claude, GPT, or Gemini models. That is the next experiment.</li>
+<li>Six questions, from two projects, with five runs each per condition.
+Treat the counts as a pilot, not a benchmark.</li>
+<li>The projects and the session archive belong to one person.</li>
+</ul>
+
+<p>The full results, with every count, are in the
+<a href="/evidence.txt">evidence summary</a>. The convention is
+<a href="/">OAK-0001</a>. If you try the rules on your own agents, we would like to
+know what happens, including if nothing changes.</p>
+
+</main>
+<hr>
+<footer>Open Agent Knowledge. Spec: <a href="/oak-0001.txt">https://oakspec.dev/oak-0001.txt</a></footer>
+</body>
+</html>
