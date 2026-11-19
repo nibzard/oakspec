@@ -102,5 +102,11 @@ coordinator sets protocols, reviews results, and decides.
 
 ## Follow-up outside OAK
 
-The barista audit found that a looper controller re-import reverted
-verified backlog edits. Treat this as a possible looper defect.
+The barista audit reported that a looper controller re-import reverted
+verified backlog edits. Investigation on 2026-11-19 corrected this: nothing
+reverted. A worker edited the worktree copy of `to-do.json`, which looper
+excludes from result commits, and the worktree was deleted at acceptance.
+The edit never reached the live file. Fix: branch
+`fix/backlog-reimport-revert` in `~/looper-fix-reimport` (commit `e760c94`).
+Report: `~/oak-experiments/looper-fix-REPORT.md`. This is the W9 failure:
+a note that never reaches the shared copy is lost.

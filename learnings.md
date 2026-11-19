@@ -2,6 +2,16 @@
 
 ## 2026-11-19
 
+- Correction: the barista backlog "revert" was not a revert. A looper worker
+  edited the worktree copy of `to-do.json`, which result commits exclude, and
+  the edit was lost when the worktree was deleted. A person later applied it
+  by hand. Fixed on looper branch `fix/backlog-reimport-revert`. This is the
+  write-path loss that v0.4 rule W9 describes.
+  [Report](../oak-experiments/looper-fix-REPORT.md)
+- OAK-0001 v0.4 is live at https://oakspec.dev with `/evidence.txt` and the
+  archived `/oak-0001-v0.3.txt`. Cloudflare took about 30 seconds to serve
+  the new `llms.txt`.
+
 - v0.4 candidate checks (51 trials): with the draft's reading rules R4 to R6,
   the E1b scope tasks scored 28 of 30 correct with no false verifications.
   The best E1b condition scored 18 of 30 with 11. This compares two runs. A
