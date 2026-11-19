@@ -62,8 +62,8 @@ def table(head, rows):
 REPLICATION = [
     ("Plain notes", [("E1b", 13), ("Replication", 14), ("Rules-only batch", 12)], False),
     ("Where field + one-line rule", [("E1b", 11), ("Replication", 11)], False),
-    ("Plain notes + R4–R6", [("Rules-only batch", 2)], True),
-    ("Notes with where + R4–R6", [("Candidate check", 0), ("Replication", 2),
+    ("Plain notes + R4 to R6", [("Rules-only batch", 2)], True),
+    ("Notes with where + R4 to R6", [("Candidate check", 0), ("Replication", 2),
                                   ("Rules-only batch", 1)], True),
 ]
 
@@ -112,7 +112,7 @@ TASKS = [
     ("node and claude versions", "stale", (1, 1, 5)),
     ("Path to Godot", "stale", (0, 3, 3)),
 ]
-CONDITIONS = ("Plain notes", "Where + 1 rule", "Where + R4–R6")
+CONDITIONS = ("Plain notes", "Where + 1 rule", "Where + R4 to R6")
 
 
 def chart_waffle():
