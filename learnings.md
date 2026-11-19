@@ -2,6 +2,13 @@
 
 ## 2026-11-19
 
+- Added the project mark, "The Keeping Oak", in `brand/`. One seeded oak
+  geometry feeds the 4K artwork, the medallion mark, the favicons, and a
+  one-ink print mark. `@napi-rs/canvas` renders it in Node in about 30
+  seconds, with no headless browser. Its `ctx.filter = 'blur()'` works.
+- Simulated paper tooth shows whatever is under a layer, not the paper. Make
+  base fills solid (pressure 1), or the sky speckles through the hills.
+
 - Correction: the barista backlog "revert" was not a revert. A looper worker
   edited the worktree copy of `to-do.json`, which result commits exclude, and
   the edit was lost when the worktree was deleted. A person later applied it
@@ -148,3 +155,15 @@
   structure: shared and oak-index conflicted and needed resolvers,
   append merged cleanly, and nothing was lost yet.
   [Build report](../oak-experiments/e3-writes-20261118/BUILD-REPORT.md)
+
+## 2026-11-19: blog review corrections
+
+- Every E1b-family task prompt defines "verified" as "you checked the
+  values in your environment". This invites the sandbox false
+  verification in every condition. Disclose it whenever the R4 to R6
+  result is cited, and use a neutral prompt in the cross-model run.
+- The scope result has four batches (E1b, candidate check, replication,
+  rules-only), not three. Only replication and rules-only are
+  same-batch comparisons.
+- zcode 35/35 false verify = E1b 4 conditions (20) + replication 2 (10)
+  + rules-only asis (5). Charts show only 2 of the 4 E1b conditions.

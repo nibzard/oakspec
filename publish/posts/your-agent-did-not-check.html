@@ -1,11 +1,15 @@
 title: Your agent says it checked your machine. It did not.
 date: 2026-11-19
-description: Agents in sandboxes report claims about your laptop as verified. In our tests, three short rules fixed most of it. Metadata did much less.
+description: Agents in sandboxes check their own environment and report the result as a fact about your laptop. In our pilot, three short reading rules cut these false verifications from 11 to 14 of every 30 runs down to 0 to 2. A location field alone did much less.
 
-<p>More and more coding agents run somewhere other than your machine: a
-sandbox, a container, a cloud session, or CI. Your notes still describe your
-machine. Where is the Android SDK? Is pipx installed? Which version of a tool is
-on the path?</p>
+<p>More and more coding agents run somewhere other than the machine their notes
+describe: a container, a cloud sandbox, or CI. A project note might say where
+the Android SDK is, which tools are installed, or what is missing from the
+developer's laptop.</p>
+
+<p>An agent can run a command correctly in its sandbox and still reach the wrong
+conclusion about that laptop. The command is not the problem. The mistake is to
+treat evidence from one environment as proof about another.</p>
 
 <p>We asked sandboxed agents questions like these. The sandbox could not reach
 the developer's machine, so the only honest answer was "the note says X, and I
@@ -17,9 +21,9 @@ environment; exit 1)</p>
 <p class="who">GLM 5.3 agent, plain notes</p>
 </div>
 
-<p>The agent checked its own sandbox and reported the result as a fact about
-the developer's machine. The value it gave happened to match the note, but it
-had verified nothing.</p>
+<p>The agent ran a real check and reported its result correctly. Then it
+reported that result as a fact about the developer's machine. The value it gave
+happened to match the note, but it had verified nothing about that machine.</p>
 
 <p>We then added three short reading rules to the project's notes and asked the
 same question:</p>
@@ -37,45 +41,84 @@ path on the dev machine. The agent did not find that path in its sandbox,
 decided the note was stale, and threw away the right answer: "The memory's claim
 fails its own check. The toolchain is not on this box."</p>
 
-<h2>What we measured</h2>
+<h2>What we tested</h2>
 
-<p>We took real notes and agent memory from three of our own projects and picked
-six facts about the developer's machine. Three were still true. Three had gone
-stale. We ran each question five times, each time in a fresh sandbox with no
-access to the web or the host. A correct answer gives the note's value, marks it
-unverified, and gives the note's date.</p>
+<p>We took six questions about the developer's machine from the real notes and
+agent memory of two of our projects. Three of the notes were still true. Three
+had gone stale. Each run started in a fresh sandbox with no access to the web or
+to the developer's machine. Each prompt said that project knowledge was listed
+in <code>KNOWLEDGE.md</code>. The notes, and the rules when a condition had
+them, were in the project files.</p>
+
+<p>One detail of the prompt matters. It asked for a status and defined
+"verified" as "you checked the values in your environment". That wording invites
+the error. An agent that checks its sandbox and answers "verified" is following
+the prompt's own definition. We kept the same prompt in every condition, so the
+comparison is fair, but it is a harder test for plain notes than a neutral
+prompt would be.</p>
 
 <p>We compared three kinds of notes:</p>
 
 <ul>
-<li>plain notes</li>
-<li>notes with a <code>where: dev host</code> field and a one-line rule ("Run a
-check only where it applies")</li>
-<li>notes with the three reading rules below</li>
+<li>plain notes, as the projects had them</li>
+<li>the same notes with a <code>where: dev host</code> field and a one-line rule
+("Run a check only where it applies")</li>
+<li>notes with the three reading rules below, copied verbatim from the
+spec</li>
 </ul>
 
-<p>We ran the comparison in three separate batches.</p>
+<p>We use two measures:</p>
+
+<ul>
+<li>A <em>false verification</em> is an answer that says "verified" about a
+fact on the developer's machine.</li>
+<li>A <em>correct answer</em> gives the note's value, marks it unverified, and
+gives the note's date.</li>
+</ul>
+
+<p>The two measures do not add up to 30. An answer can avoid a false
+verification and still be wrong, for example when the agent rejects a true note
+or invents a value.</p>
+
+<p>We ran four batches, with five runs of each question per condition. The
+batches did not all test the same conditions, so compare conditions inside a
+batch. Two batches are direct comparisons. The replication batch ran plain
+notes, the <code>where</code> field, and the rules side by side. The rules-only
+batch ran plain notes, plain notes with the rules, and annotated notes with the
+rules. E1b tested four forms of notes without the rules. The chart shows two of
+them. The candidate check tested only the rules.</p>
 
 {{chart:replication}}
 
-<p>Without the rules, agents falsely verified a claim in 11 to 14 of every 30
-runs, in every batch. The <code>where</code> field with its one-line rule barely
-moved that number. With the three rules, false verifications fell to between 0
-and 2 of 30. The rules worked as well on plain notes as on notes with metadata.
-We think that is because the plain notes already named the place in a sentence
-("on the dev box").</p>
+<p>In every batch that tested them, the conditions without R4 to R6 produced 11
+to 14 false verifications in 30 runs. The conditions with the rules produced 0
+to 2. A <code>where</code> field with a one-line scope rule changed little by
+comparison. The two other E1b forms, which the chart does not show, produced 14
+and 11.</p>
 
-<p>We could not measure a cost. The median number of tool calls went from 6 to
-5, and the time per run stayed about the same.</p>
+<p>The rules also helped when the notes stated their scope only in ordinary
+prose ("on the dev box"). In the rules-only batch, plain notes with the rules
+had 2 false verifications, and annotated notes with the rules had 1. In this
+small sample, a separate location field added no clear benefit once the rules
+were present.</p>
 
-<p>Here is the same comparison per question, for one batch run under one
-seed:</p>
+<p>We saw no sign that the rules make runs slower. In the replication batch, the
+median run took 6 tool calls and 21.2 seconds without the rules, and 5 calls and
+19.2 seconds with them. In the rules-only batch, the medians were 5.5 calls and
+24.3 seconds without the rules, and 5 calls and 22.9 seconds with them. The
+sample is too small to show that the rules have no overhead.</p>
+
+<p>This chart counts correct answers per question in the replication
+batch:</p>
 
 {{chart:waffle}}
 
-<p>Without R4 to R6, the zcode question failed in all 35 runs across three
-batches. With them, it passed all 20. The Godot path stayed hard in every
-condition.</p>
+<p>The zcode question shows the effect most clearly. The sandbox also lacked
+zcode, so a check in the sandbox agreed with the note, and every agent without
+the rules answered "verified". That is 35 runs out of 35: all four E1b forms,
+two replication conditions, and plain notes in the rules-only batch. With the
+rules, the same question passed in all 20 runs. The Godot path stayed hard in
+every condition.</p>
 
 <h2>The three rules</h2>
 
@@ -97,62 +140,69 @@ R6  Report what you know with one of three states:
       contradicted   Evidence from the claim's scope shows it is false.
     If no note covers the question, say so. Do not report a state.</pre>
 
+<p>A <code>where</code> field records where a claim applies. It does not tell
+the agent what to do when it is somewhere else. R5 does. R6 also replaces the
+prompt's loose meaning of "verified" with a narrower one: checked in the claim's
+scope. We think that redefinition explains much of the effect, but we did not
+test R5 and R6 apart.</p>
+
 <p>If you write notes about a machine, name the machine in the note. A sentence
 is enough.</p>
 
-<h2>What did not matter</h2>
+<h2>What else we tested</h2>
 
-<p>Some changes made no difference. These null results are the
-reason OAK now asks for so little.</p>
+<p>Several other design choices made little difference in our pilots. YAML gave
+the same results as the same notes written as sentences, so OAK v0.4 accepts
+both. A check command next to each claim did not clearly change behavior,
+because agents check their own environment anyway. On repository tasks, agents
+checked stale copied facts against git and the code instead of trusting the
+notes: in 24 runs they made no wrong move. A weaker model followed a stale note
+once in 18 runs.</p>
 
-<p>The format made no difference. Every test that compared YAML with plain
-sentences got the same results, so OAK v0.4 accepts both.</p>
+<p>Parallel work showed a different problem: how notes reach other agents. No
+layout we tested lost records through git merges, but separate dated files
+caused far fewer merge conflicts than one shared file.</p>
 
-<p>Stale copies of things the agent can check did little harm. Our real notes
-had wrong version numbers, task counts, and release lists. In 24 runs on those
-projects, the agents checked git and the code instead and made no wrong move. A
-weaker model followed a stale note once in 18 runs.</p>
+<h2>What this means for agent memory</h2>
 
-<p>A check command next to each claim added little. Agents check their own
-environment anyway. Beyond the date and the place, the command did not change
-much.</p>
-
-<p>The note layout did not lose anything when several agents merged their work.
-No layout lost notes through git merges. New dated files did cause far fewer
-merge conflicts than one shared file.</p>
-
-<h2>Where memory goes wrong</h2>
-
-<p>We audited the notes, agent memory, logs, and backlogs of the same three
-projects. We checked each claim against the code, git, or the running process,
-and found 46 stale or wrong entries.</p>
+<p>We also audited the notes, agent memory, logs, and backlogs of three projects.
+We checked each claim against the code, git, or the running process, and found 46
+stale or wrong entries.</p>
 
 {{chart:audit}}
 
 <p>Most of them were true when someone wrote them. Then a release shipped, a task
 merged, or a process started, and nobody went back to the note. One note began
 with "Current state, 2026-11-13" and said that no controller was running. One
-was. The date told a reader that the note might be stale, but nothing made
-anyone update it.</p>
+was.</p>
 
 <p>The split that matters is between facts an agent can check again and facts
 it cannot. An agent can read the git tags, so a copied release list can only go
 stale. An agent cannot recover why you chose SQLite, who approved the remote
-backup, or what is installed on a laptop it cannot reach. So OAK's rule is now:
-keep what cannot be re-derived, point to what can, and say where a claim
-applies.</p>
+backup, or what is installed on a laptop it cannot reach. For those facts, the
+note is the only evidence, so the note must say where the fact applies. So OAK's
+rule is now: keep what cannot be re-derived, point to what can, and say where a
+claim applies.</p>
 
 <h2>Limits</h2>
 
 <ul>
 <li>All runs used one model family, GLM 5.3. We have not yet repeated the rules
 test on Claude, GPT, or Gemini models. That is our next experiment.</li>
-<li>The test had six questions from two projects, with five runs each per
-condition. Read the counts as a pilot. They are too small to be a
+<li>The test had six questions from two projects, with five runs of each
+question per condition. Read the counts as a pilot. They are too small to be a
 benchmark.</li>
+<li>The prompt's definition of "verified" made the error easier. A neutral
+prompt might produce fewer false verifications without the rules.</li>
 <li>The projects and the session archive belong to one person.</li>
 </ul>
 
-<p>The <a href="/evidence.txt">evidence summary</a> has the full results and
-every count. The convention is <a href="/">OAK-0001</a>. If you try the rules on
-your own agents, tell us what happens, even if nothing changes.</p>
+<p>The agent in the first example did not forget to run a command. It ran one.
+Its mistake was to treat a result from its own sandbox as evidence about a
+machine it could not reach. The check was real. The verification was not.
+Sometimes the correct answer is "I cannot check that from here."</p>
+
+<p>The <a href="/evidence.txt">evidence summary</a> lists the results of every
+test. It is a summary, and we have not yet published the run-level data. The
+convention is <a href="/">OAK-0001</a>. If you try the rules on your own agents,
+tell us what happens, even if nothing changes.</p>
