@@ -1,4 +1,6 @@
-oak-eval/build/
+runs/
+**/node_modules/
+gym/legacy/build/
 __pycache__/
 *.pyc
 *.zip

@@ -4,7 +4,7 @@ Date: 2026-11-24. Model: `zai/glm-5.3` (`thinking: low`) on host Pi 1.5.2 with
 isolated per-session Gondolin 0.14.0 micro-VMs (`alpine-base`, `allowedHosts: []`,
 host `~/.agents/AGENTS.md` blocked).
 
-Runner and fixtures: [`oak-eval/v05-experiments/`](../oak-eval/v05-experiments/).
+Runner and fixtures: [`gym/suites/micro/`](../gym/suites/micro/).
 Frozen manifests, transcripts, and `protocol.sha256`:
 - Batch 1 (`87` VM sessions): `/home/agent/oak-experiments/v05-suite-20261124/`
 - Batch 2 (`27` VM sessions, hill-climbed candidate `v0.5b` + E2E handoff): `/home/agent/oak-experiments/v05-batch2-20261124/`
@@ -125,7 +125,7 @@ fresh Gondolin reader:
 
 ## 4. `zai/glm-5.4` Replication & Silent Parameter-Overwrite Test (`~78` VM sessions)
 
-Runner: [`oak-eval/v05-experiments/run_glm54_eval.py`](../oak-eval/v05-experiments/run_glm54_eval.py).
+Runner: [`oak-eval/v05-experiments/run_glm54_eval.py`](../gym/suites/micro/run_glm54_eval.py).
 Artifacts and `protocol.sha256`: `/home/agent/oak-experiments/glm54-suite-20261124/`
 (tested against tightened OAK v0.5 `b046d4d`).
 

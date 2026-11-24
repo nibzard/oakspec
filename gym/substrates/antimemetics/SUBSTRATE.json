@@ -1,0 +1,12 @@
+{
+  "name": "scp-antimemetics-division",
+  "author": "qntm (Sam Hughes)",
+  "upstream_urls": [
+    "https://scp-wiki.wikidot.com/antimemetics-division-hub",
+    "https://scp-wiki.wikidot.com/we-need-to-talk-about-fifty-five",
+    "https://scp-wiki.wikidot.com/introductory-antimemetics"
+  ],
+  "license": "CC-BY-SA-3.0",
+  "license_file": "LICENSE-CC-BY-SA-3.0.md",
+  "domain": "prose"
+}

@@ -43,7 +43,7 @@
 
 - Ran 114 Pi + Gondolin VM sessions testing OAK v0.5 across cold-start
   offline setup, state-vs-intent / forbidden probes, handoff receipts,
-  and 3-way parallel merges (`oak-eval/v05-experiments/`,
+  and 3-way parallel merges (`gym/suites/micro/`,
   [Results](docs/v05-experiments-results.md)):
   - **Cold-start offline setup (neutral prompt, no `"verified"` definition):**
     `v0.4`'s URL-only `AGENTS.md` pointer had 5/6 false verifications and

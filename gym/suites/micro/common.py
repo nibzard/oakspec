@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 HERE = Path(__file__).resolve().parent
-REPO_ROOT = HERE.parents[1]
+REPO_ROOT = HERE.parents[2]
 RUNNER = REPO_ROOT / ".agents/skills/pi-gondolin-experiments/scripts/run_trial.py"
 LAUNCHER = HERE / "launch_pi.py"
 SPEC_V04 = REPO_ROOT / "publish/oak-0001-v0.4.txt"

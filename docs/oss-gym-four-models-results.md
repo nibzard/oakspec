@@ -3,8 +3,8 @@
 Date: 2026-11-24. Spec under test: live `https://oakspec.dev` (OAK-0001 v0.5,
 commit `b046d4d`).
 
-Runner: [`oak-eval/oss-gym/run_oss_gym.py`](../oak-eval/oss-gym/run_oss_gym.py) and
-[`oak-eval/oss-gym/complete_oss_gym_pi.py`](../oak-eval/oss-gym/complete_oss_gym_pi.py).
+Runner: [`oak-eval/oss-gym/run_oss_gym.py`](../gym/suites/code/run_oss_gym.py) and
+[`oak-eval/oss-gym/complete_oss_gym_pi.py`](../gym/suites/code/complete_oss_gym_pi.py).
 Raw artifacts and logs:
 - Initial run (recording the `Pi` `bwrap` read-only lockfile `EROFS` error): `/home/agent/oak-experiments/oss-gym-20261124/`
 - Completed run (after changing `Pi`'s config mount from `--ro-bind` to `--bind` + `--no-approve`): `/home/agent/oak-experiments/oss-gym-20261124-complete/`

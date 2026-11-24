@@ -1,0 +1,8 @@
+{
+  "name": "pallets/itsdangerous",
+  "upstream_url": "https://github.com/pallets/itsdangerous",
+  "commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "license": "BSD-3-Clause",
+  "license_file": "LICENSE.txt",
+  "domain": "code"
+}
