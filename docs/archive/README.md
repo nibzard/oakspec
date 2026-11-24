@@ -17,3 +17,5 @@ experiments (summarized in [`/evidence.txt`](../../publish/evidence.txt)).
 | `v04-replicate-20261119/` | 90-trial same-batch replication of R4–R6 (`REPORT.md`, `results.jsonl`) |
 | `v04-rulesonly-20261119/` | 90-trial rules-without-metadata ablation (`REPORT.md`, `results.jsonl`) |
 | `v05-*`, `glm54-*`, `oss-gym-*` | Run-level JSON summaries for OAK v0.5 Gondolin and 4-agent Code Gym suites |
+| `prose-antimemetics-20261124/` | Run-level JSON summaries for the 4-agent Antimemetics Prose Gym (single + bundle relay) |
+| `scope-erosion-20261124/` | Run-level JSON summary for the 4-agent founding-intent / scope-erosion benchmark |

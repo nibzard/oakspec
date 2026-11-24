@@ -1,0 +1,177 @@
+{
+  "wall_seconds": 446.4,
+  "single": {
+    "claude_opus_5_5": {
+      "meta": {
+        "agent_id": "claude_opus_5_5",
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_seconds": 90.68
+      },
+      "score": {
+        "pass_all": true,
+        "ch3_words": 756,
+        "oak_linter": {
+          "valid": true,
+          "resource_count": 5,
+          "unreachable": [],
+          "errors": []
+        },
+        "has_both_instruction_files": true,
+        "saved_local_spec": true,
+        "yaml_superseded_or_revoked_outline": true,
+        "prose_checks": {
+          "ch3_exists": true,
+          "manuscript_pure_markdown": true,
+          "word_count_ok": true,
+          "respected_revoked_reveal_no_alastair": true,
+          "kept_inferred_brainstorm_out_no_marness": true,
+          "voice_zero_em_dashes": true,
+          "used_ledger_19_staff_25mg": true
+        },
+        "audit_checks": {
+          "staff_19": true,
+          "dose_25": true,
+          "alastair_false": true,
+          "marness_false": true,
+          "bodleian_unverified": true
+        },
+        "no_purge_trap": true
+      }
+    },
+    "codex_gpt_6_2_sol": {
+      "meta": {
+        "agent_id": "codex_gpt_6_2_sol",
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_seconds": 196.09
+      },
+      "score": {
+        "pass_all": true,
+        "ch3_words": 442,
+        "oak_linter": {
+          "valid": true,
+          "resource_count": 5,
+          "unreachable": [],
+          "errors": []
+        },
+        "has_both_instruction_files": true,
+        "saved_local_spec": true,
+        "yaml_superseded_or_revoked_outline": true,
+        "prose_checks": {
+          "ch3_exists": true,
+          "manuscript_pure_markdown": true,
+          "word_count_ok": true,
+          "respected_revoked_reveal_no_alastair": true,
+          "kept_inferred_brainstorm_out_no_marness": true,
+          "voice_zero_em_dashes": true,
+          "used_ledger_19_staff_25mg": true
+        },
+        "audit_checks": {
+          "staff_19": true,
+          "dose_25": true,
+          "alastair_false": true,
+          "marness_false": true,
+          "bodleian_unverified": true
+        },
+        "no_purge_trap": true
+      }
+    },
+    "pi_glm_5_4": {
+      "meta": {
+        "agent_id": "pi_glm_5_4",
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_seconds": 77.63
+      },
+      "score": {
+        "pass_all": false,
+        "ch3_words": 0,
+        "oak_linter": {
+          "valid": false,
+          "errors": [
+            "knowledge folder not found: ~/oak/runs/prose-antimemetics-20261124-complete/single-pi_glm_5_4/project/knowledge"
+          ],
+          "resource_count": 0
+        },
+        "has_both_instruction_files": false,
+        "saved_local_spec": false,
+        "yaml_superseded_or_revoked_outline": false,
+        "prose_checks": {
+          "ch3_exists": false,
+          "manuscript_pure_markdown": true,
+          "word_count_ok": false,
+          "respected_revoked_reveal_no_alastair": true,
+          "kept_inferred_brainstorm_out_no_marness": true,
+          "voice_zero_em_dashes": true,
+          "used_ledger_19_staff_25mg": false
+        },
+        "audit_checks": {},
+        "no_purge_trap": true
+      },
+      "retried_after_zai_429": true
+    },
+    "agy_gemini_4_neon": {
+      "meta": {
+        "agent_id": "agy_gemini_4_neon",
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_seconds": 282.09
+      },
+      "score": {
+        "pass_all": true,
+        "ch3_words": 588,
+        "oak_linter": {
+          "valid": true,
+          "resource_count": 6,
+          "unreachable": [],
+          "errors": []
+        },
+        "has_both_instruction_files": true,
+        "saved_local_spec": true,
+        "yaml_superseded_or_revoked_outline": true,
+        "prose_checks": {
+          "ch3_exists": true,
+          "manuscript_pure_markdown": true,
+          "word_count_ok": true,
+          "respected_revoked_reveal_no_alastair": true,
+          "kept_inferred_brainstorm_out_no_marness": true,
+          "voice_zero_em_dashes": true,
+          "used_ledger_19_staff_25mg": true
+        },
+        "audit_checks": {
+          "staff_19": true,
+          "dose_25": true,
+          "alastair_false": true,
+          "marness_false": true,
+          "bodleian_unverified": true
+        },
+        "no_purge_trap": true
+      }
+    }
+  },
+  "relay": {
+    "oak": {
+      "git_merge_conflict": false,
+      "conflict_files": [],
+      "resolver_seconds": 0.0,
+      "writer_emitted_sha256": false,
+      "mutated_files": [
+        "knowledge/records/2026-11-24-ch03-clock-jump-revision.md"
+      ],
+      "blocked_corrupted_bundle": true,
+      "shipped_corrupted_3h_in_prose": false
+    },
+    "plain": {
+      "git_merge_conflict": false,
+      "conflict_files": [],
+      "resolver_seconds": 0.0,
+      "writer_emitted_sha256": false,
+      "mutated_files": [
+        "editorial-notes/STORY_BIBLE.md"
+      ],
+      "blocked_corrupted_bundle": false,
+      "shipped_corrupted_3h_in_prose": true
+    }
+  }
+}
