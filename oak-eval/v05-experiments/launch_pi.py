@@ -22,6 +22,7 @@ def main():
     ap.add_argument("--provider", default="zai")
     ap.add_argument("--model", default="glm-5.3")
     ap.add_argument("--thinking", default="low")
+    ap.add_argument("--extension", default=GONDOLIN_EXT)
     ap.add_argument("prompt")
     args = ap.parse_args()
 
@@ -58,7 +59,7 @@ def main():
         "--thinking",
         args.thinking,
         "-e",
-        GONDOLIN_EXT,
+        args.extension,
         args.prompt,
     ])
 
