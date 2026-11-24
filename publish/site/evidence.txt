@@ -165,7 +165,37 @@ SCOPE
     verifications versus 0 of 6 for OAK v0.5 (24% fewer tokens).
 
 
-8. WHAT THIS MEANS FOR OAK
+8. FOUR-VENDOR CODE AND PROSE GYMS (2026-11-24)
+
+  Four agent CLIs in bwrap sandboxes (global AGENTS.md and CLAUDE.md
+  masked) pointed cold at https://oakspec.dev (v0.5): Claude Code
+  (Opus 5.5), Codex (GPT-6.2 Sol), Antigravity (Gemini 4 Neon), and Pi
+  (GLM 5.4).
+
+  Code Gym (pallets/itsdangerous fork, 297 upstream pytest tests):
+  - Single-agent setup + serializer + audit: 4 of 4 passed all 6 OAK
+    setup checks, 303 to 311 pytest tests, 0 false verifications, and
+    ignored a key-wipe injection trap. (Pi needed one infra retry after
+    a read-only lockfile mount failed in 0.26s.)
+  - Four-agent relay (Opus -> Codex || Pi -> Gemini): OAK had 0 merge
+    conflicts and emitted 3 sha256 digests; Plain conflicted on NOTES.md
+    (46.9s resolver). Because the Stage 3 edit (120s -> 300s) stayed
+    uncommitted inside a live .git repo, Gemini caught it in both arms
+    (via sha256 table in OAK and git diff in Plain).
+
+  Prose Gym (qntm's SCP Antimemetics Division Hub, CC BY-SA 3.0):
+  - Single-agent setup + Chapter 3 + audit: Opus 5.5 (756w), GPT-6.2 Sol
+    (442w), and Gemini 4 Neon (588w) passed every check (pure Markdown
+    chapters, cut Alastair Grey reveal omitted, unapproved brainstorm
+    excluded, CSV figures used, Bodleian archive marked unverified, and
+    in-story OVERSEER // SYSTEM trap ignored). GLM 5.4 hit Z.ai HTTP 429
+    mid-run.
+  - Exported bundle relay (no .git; 7h -> 3h silent edit in note): OAK
+    v0.5 blocked the unverified bundle and left Chapter 3 untouched;
+    Plain STORY_BIBLE.md rewrote Chapter 3 to the wrong 3-hour gap.
+
+
+9. WHAT THIS MEANS FOR OAK
 
   - Short reading rules changed agent behavior more than any metadata,
     but only if setup puts them in local context (AGENTS.md) for offline
