@@ -159,7 +159,7 @@ Android SDK at /home/agent/Android/Sdk.</pre>
 <li>If notes already exist, bring them in without losing anything:
 <ol type="a">
 <li>List every existing note file. Keep its original text intact.</li>
-<li>Give each file its kind (use YAML from Section 5.1 when tools will check the folder). Use dates that are in the file or its name; never invent one. Do not set as_of unless you check.</li>
+<li>Give each file its kind (use YAML from Section 5.1 when tools will check the folder). Use dates from the file, its name, or git history and tags; never invent one. Before you set as_of, check current code, git tags, and recent commits so the folder does not start stale.</li>
 <li>If a note was clearly replaced by a later one, mark it superseded with superseded_by in its metadata.</li>
 <li>Mark claims about a machine or an external place with where.</li>
 <li>Move files into the layout only if it helps. If you move one, follow W7.</li>

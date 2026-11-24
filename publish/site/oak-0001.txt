@@ -313,8 +313,10 @@ IF AN AGENT WAS POINTED HERE
   3. If notes already exist, bring them in without losing anything:
      a. List every existing note file. Keep its original text intact.
      b. Give each file its kind (use YAML from Section 5.1 when tools
-        will check the folder). Use dates that are in the file or its
-        name; never invent one. Do not set as_of unless you check.
+        will check the folder). Use dates from the file, its name, or
+        git history and tags; never invent one. Before you set as_of,
+        check current code, git tags, and recent commits so the folder
+        does not start stale.
      c. If a note was clearly replaced by a later one, mark it superseded
         with superseded_by in its metadata.
      d. Mark claims about a machine or an external place with where.

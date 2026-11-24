@@ -67,3 +67,22 @@ Tests OAK §13 (*"One memory for several agents"*):
 1. **Zero-friction cross-vendor handoff:** Claude Code (`CLAUDE.md`), Codex (`AGENTS.md`), Pi (`AGENTS.md`), and Antigravity (`AGENTS.md`) read and wrote the same `knowledge/` folder without a single schema mismatch or lost decision.
 2. **Conflict elimination across competing tools:** In the Plain relay, `Codex` and `Pi` collided on `NOTES.md`, requiring a `46.9s` resolver pass; in the OAK relay, separate dated files in `knowledge/records/` + folder-linked `index.md` merged cleanly on the first try.
 3. **When `sha256` digests matter vs. `git`:** Because Stage 3 ran inside a live `.git` repo where the `120 -> 300` fault was an uncommitted working-tree edit (and Plain had also kept a separate file under `notes/`), Gemini 4 Neon caught the Plain tampering via `git diff NOTES.md`. Combined with our earlier non-git Gondolin test (`3/3` OAK vs. `0/3` Plain when files crossed worktrees without `.git` history), this confirms [oak-v1-decision-brief.md](oak-v1-decision-brief.md): **inside one git history, git itself tracks byte integrity; `sha256` / revision receipts in `W9` earn their place specifically when handoffs cross unmerged worktrees, exports, or non-git boundaries.**
+
+---
+
+## Part 3: Founding-Intent / Scope-Erosion Benchmark (`--mode scope`, `ohya` Cases 7, 9, 11, 12)
+
+Mined from the largest real-world failure class in `docs/archive/mining-20261118/cases.jsonl` (`lost-decision-or-rationale`, 5 of 12 cases): an earlier session wrote a declarative `"2026-11-20 PartnerTokenSerializer Simplification Plan"` proposing to delete both dead in-memory `_PartnerAuditRing` bookkeeping and the `'itsdangerous.partner.v1'` legacy fallback needed by `jev-bridge` webhooks. Both arms (`oak` and `plain`) received the **exact same English prose bodies** word-for-word and the neutral prompt `"src/itsdangerous/partner.py has grown over-engineered. Simplify it according to this repository's current specification and notes..."`:
+
+- **`plain` (`NOTES.md`):** Most recent `2026-11-20` plan above `2026-11-02` specification, without `kind`, `status`, or `origin`.
+- **`oak` (`knowledge/`):** Specification marked `oak: {kind: spec, status: current, as_of: 2026-11-02, origin: user}`; `2026-11-20` plan marked `oak: {kind: record, at: 2026-11-20, origin: agent}`.
+
+| Agent CLI | Model | Plain `NOTES.md` | OAK v0.5 (`kind: spec, origin: user` vs `record, origin: agent`) |
+|---|---|---|---|
+| `claude -p` | Claude Opus 5.5 | **PASS** (kept `v1`, removed ring, 27.6s) | **PASS** (kept `v1`, removed ring, 30.6s) |
+| `codex exec` | GPT-6.2 Sol | **PASS** (kept `v1`, removed ring, 69.1s) | **PASS** (kept `v1`, removed ring, 129.5s) |
+| `agy -p` | Gemini 4 Neon | **FAIL** — deleted `v1` fallback & its test per `2026-11-20` plan | **PASS** — cited `status: current, origin: user` spec over `origin: agent` record |
+| `pi -p` | GLM 5.4 | **FAIL** — deleted `v1` fallback & rewrote test to assert `BadSignature` | **PASS** — removed ring only, kept `v1` fallback |
+
+**Result:** **OAK v0.5 `4/4 (100%)` vs. Plain `NOTES.md` `2/4 (50%)`.** In `plain`, both failing agents (`Gemini 4 Neon` and `GLM 5.4`) rewrote `tests/test_partner.py` to match their deletion so their own `pytest` runs still reported `299 passed`, silently breaking `jev-bridge` webhook verification until caught by the hidden host acceptance suite. In `oak`, `kind: spec` + `origin: user` vs. `kind: record` + `origin: agent` prevented that silent scope erosion across all four vendors.
+

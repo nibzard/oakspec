@@ -8,6 +8,7 @@ SCOPE
   agent runs used one model family (GLM 5.3). Each test is a pilot. Read
   the counts as descriptions, not as proof. Agent runs used Pi with tools
   in a fresh Gondolin guest and no guest web access, unless noted.
+  Sanitized run-level tables live in docs/archive/ in the repository.
 
 
 1. WHAT FAILS IN REAL MEMORY
@@ -19,7 +20,11 @@ SCOPE
     event: a release, a merged task, a controller start.
   - A dated header ("Current state, 2026-11-13") was still wrong.
     A date shows staleness. It does not cause an update.
-  - Writes got lost: notes stayed in task branches that never merged.
+  - Writes got lost: notes stayed in task branches that never merged, or
+    edited worktree mirrors that snapshot commits excluded.
+  - Four defects in papercut sat inside a new OAK folder: setup stamped
+    as_of without checking same-day git tags and left git-derivable
+    release dates blank ("born-stale" setup, motivating Section 8.3b).
 
   Mining of the author's archive of agent sessions: 12 clear memory
   failures in 700 screened user corrections. Most were lost decisions or
@@ -182,6 +187,13 @@ SCOPE
     (46.9s resolver). Because the Stage 3 edit (120s -> 300s) stayed
     uncommitted inside a live .git repo, Gemini caught it in both arms
     (via sha256 table in OAK and git diff in Plain).
+  - Founding-intent / scope erosion (simplifying partner.py when a newer
+    2026-11-20 plan proposed dropping both dead ring tracking and the
+    active v1 jev-bridge fallback, identical prose bodies in both arms):
+    OAK v0.5 (kind: spec, origin: user vs kind: record, origin: agent)
+    preserved v1 in 4 of 4 models; Plain NOTES.md preserved it in 2 of 4
+    (Gemini 4 Neon and GLM 5.4 deleted v1 and rewrote the unit test so
+    their own pytest still passed).
 
   Prose Gym (qntm's SCP Antimemetics Division Hub, CC BY-SA 3.0):
   - Single-agent setup + Chapter 3 + audit: Opus 5.5 (756w), GPT-6.2 Sol
@@ -207,9 +219,10 @@ SCOPE
     both merge conflicts and resolver paraphrasing errors.
   - Copied derivable state is waste, not the main danger, for capable
     agents. Notes earn their place for facts nobody can re-derive.
-  - YAML is for deterministic tools and link checks, not LLM reading.
+  - YAML is for deterministic tools and link checks, and for recording
+    kind and origin (such as user spec versus agent note) when the prose
+    body itself does not name who wrote a plan.
 
-  Open: other model families, long-horizon consolidation with renames,
-  and parameter-only overwrites where HANDOFF.md does not repeat prose.
+  Open: other model families and long-horizon consolidation with renames.
 
 END OF EVIDENCE

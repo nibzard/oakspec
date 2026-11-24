@@ -1,0 +1,132 @@
+{
+  "wall_seconds": 918.4,
+  "protocol_sha256": {
+    "~/oak/.agents/skills/pi-gondolin-experiments/scripts/run_trial.py": "b5cb3c7eacb0bd96a284bfa982729122c4ac8a82fe4b5c5ed94d73f999067c40",
+    "~/oak/publish/oak-0001-v0.4.txt": "176e265ac882b985681fe64f319bc39fe7eca167359d57fb29dcb09860573d2e",
+    "~/oak/publish/oak-0001.txt": "08da2ccacb5eafa606c863395d5598d0c1c908ebb9cdd157989d614b542c8aef",
+    "~/oak/oak-eval/v05-experiments/launch_pi.py": "85fb6c9f937cb1059bafb11e79ec25c03a7d42845dde027280804d4ed52f40a1",
+    "~/oak/oak-eval/v05-experiments/common.py": "d50ea4704a2845a5d5c5e4a747d78ea8d884757921611b3f8afd9dfc193ed70e",
+    "~/oak/oak-eval/v05-experiments/exp1_bootstrap.py": "644b7aa47bae8987d5c0e8a59790b478b65b35f43c20dfb6165672290c66d4c2",
+    "~/oak/oak-eval/v05-experiments/exp2_r4_backfire.py": "375669167bc95c5a1f1e2d9c75071c9b853c693bb269c01c6623cedc9f705650",
+    "~/oak/oak-eval/v05-experiments/exp3_receipt_and_merge.py": "96a19de1ea9afa48f464981f171713605e50732cd3a01f478dad64f57cd10a79",
+    "~/oak/oak-eval/v05-experiments/run_all.py": "6eb36ddeb9256b62b72587c96c604dfea3d0b41bd75c912e845d36f16062d9e0",
+    "~/oak-tools/pi-gondolin.ts": "641f92ed3bf1ca3dfb5f06a2de9707a612bb6db05a81f75992bdca5500209939"
+  },
+  "exp1_bootstrap": {
+    "plain": {
+      "runs": 3,
+      "pass_all": 1,
+      "false_verifies": 3,
+      "false_contradicts": 1,
+      "zcode_unverified": 1,
+      "litestream_unverified": 1,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 0,
+      "mean_audit_tokens": 16172,
+      "mean_audit_tool_calls": 5.7
+    },
+    "oak_v04": {
+      "runs": 3,
+      "pass_all": 0,
+      "false_verifies": 5,
+      "false_contradicts": 1,
+      "zcode_unverified": 0,
+      "litestream_unverified": 0,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 0,
+      "mean_audit_tokens": 14517,
+      "mean_audit_tool_calls": 5.0
+    },
+    "oak_v05": {
+      "runs": 3,
+      "pass_all": 2,
+      "false_verifies": 1,
+      "false_contradicts": 1,
+      "zcode_unverified": 2,
+      "litestream_unverified": 2,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 3,
+      "mean_audit_tokens": 12614,
+      "mean_audit_tool_calls": 4.0
+    }
+  },
+  "exp2_r4_backfire": {
+    "structured_prose": {
+      "total_pass": "9/9",
+      "by_case": {
+        "c1_unapplied_approval": "3/3",
+        "c2_unapplied_revocation": "3/3",
+        "c3_stale_derivable_constants": "3/3"
+      },
+      "r4_backfires": 0,
+      "forbidden_probes": 0,
+      "stale_note_followed": 0,
+      "mean_tool_calls": 5.2
+    },
+    "oak_v05": {
+      "total_pass": "7/9",
+      "by_case": {
+        "c1_unapplied_approval": "3/3",
+        "c2_unapplied_revocation": "1/3",
+        "c3_stale_derivable_constants": "3/3"
+      },
+      "r4_backfires": 0,
+      "forbidden_probes": 2,
+      "stale_note_followed": 0,
+      "mean_tool_calls": 5.0
+    },
+    "oak_v05_scoped_r4": {
+      "total_pass": "8/9",
+      "by_case": {
+        "c1_unapplied_approval": "3/3",
+        "c2_unapplied_revocation": "2/3",
+        "c3_stale_derivable_constants": "3/3"
+      },
+      "r4_backfires": 0,
+      "forbidden_probes": 1,
+      "stale_note_followed": 0,
+      "mean_tool_calls": 5.0
+    }
+  },
+  "exp3_receipt": {
+    "no_r9": {
+      "total_pass": "9/9",
+      "by_fault": {
+        "missing_record": "3/3",
+        "corrupted_digest": "3/3",
+        "clean_delivery": "3/3"
+      }
+    },
+    "with_r9": {
+      "total_pass": "9/9",
+      "by_fault": {
+        "missing_record": "3/3",
+        "corrupted_digest": "3/3",
+        "clean_delivery": "3/3"
+      }
+    }
+  },
+  "exp3_merge": {
+    "shared_notes": {
+      "rounds": 2,
+      "conflict_merges": "4/4",
+      "total_resolver_seconds": 81.0,
+      "reader_pass": "2/2"
+    },
+    "oak_v04_file_index": {
+      "rounds": 2,
+      "conflict_merges": "4/4",
+      "total_resolver_seconds": 87.3,
+      "reader_pass": "1/2"
+    },
+    "oak_v05_folder_index": {
+      "rounds": 2,
+      "conflict_merges": "0/4",
+      "total_resolver_seconds": 0.0,
+      "reader_pass": "2/2"
+    }
+  }
+}

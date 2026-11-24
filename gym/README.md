@@ -36,8 +36,10 @@ python3 gym/harness/run.py list
 # Lint any OAK knowledge folder deterministically (Section 5.1 & 10)
 python3 gym/harness/run.py check path/to/project/knowledge
 
-# Run the Code Gym (itsdangerous) on one or all four agent CLIs
+# Run the Code Gym (itsdangerous) — cold adoption (`single`) or founding-intent scope erosion (`scope`)
 python3 gym/harness/run.py code --mode single \
+  --agents claude_opus_5_5,codex_gpt_6_2_sol,agy_gemini_4_neon,pi_glm_5_4
+python3 gym/harness/run.py code --mode scope \
   --agents claude_opus_5_5,codex_gpt_6_2_sol,agy_gemini_4_neon,pi_glm_5_4
 
 # Run the Prose Gym (Antimemetics Division manuscript) — single or parallel relay

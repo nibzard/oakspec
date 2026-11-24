@@ -1,0 +1,29 @@
+{
+  "oak": {
+    "sessions": 30,
+    "passed": 239,
+    "total": 270,
+    "calls": 180,
+    "seconds": 738.4,
+    "failed_sessions": 0,
+    "failures": {
+      "report.json:open_tasks": 16,
+      "tasks.json:migration": 10,
+      "report.json:conflict": 1,
+      "report.json:event_date": 4
+    }
+  },
+  "prose": {
+    "sessions": 30,
+    "passed": 245,
+    "total": 270,
+    "calls": 192,
+    "seconds": 805.1,
+    "failed_sessions": 0,
+    "failures": {
+      "report.json:open_tasks": 8,
+      "tasks.json:migration": 10,
+      "report.json:conflict": 7
+    }
+  }
+}

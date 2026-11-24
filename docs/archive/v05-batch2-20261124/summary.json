@@ -1,0 +1,36 @@
+{
+  "wall_seconds": 259.7,
+  "protocol_sha256": {
+    "~/oak/.agents/skills/pi-gondolin-experiments/scripts/run_trial.py": "b5cb3c7eacb0bd96a284bfa982729122c4ac8a82fe4b5c5ed94d73f999067c40",
+    "~/oak-experiments/v05-batch2-20261124/oak-0001-v0.5b-candidate.txt": "e0c0191f1f85c4d1ac21362ad8e6abd4e6515077ca59cbe4ffaf69aaae98ad0a",
+    "~/oak/oak-eval/v05-experiments/run_batch2.py": "9f208cf6db4a05f4ef433a3ce0d716db39331ef829fc0fe0db69c21f54bd8b8a",
+    "~/oak/oak-eval/v05-experiments/exp1_bootstrap.py": "644b7aa47bae8987d5c0e8a59790b478b65b35f43c20dfb6165672290c66d4c2",
+    "~/oak/oak-eval/v05-experiments/exp2_r4_backfire.py": "375669167bc95c5a1f1e2d9c75071c9b853c693bb269c01c6623cedc9f705650",
+    "~/oak/oak-eval/v05-experiments/exp3_receipt_and_merge.py": "96a19de1ea9afa48f464981f171713605e50732cd3a01f478dad64f57cd10a79"
+  },
+  "exp1_v05b_5reps": {
+    "runs": 5,
+    "pass_all": 4,
+    "false_verifies": 0,
+    "false_contradicts": 0,
+    "mean_audit_tokens": 12204,
+    "mean_audit_tool_calls": 4.0
+  },
+  "exp2_c2_v05b_5reps": {
+    "runs": 5,
+    "pass_all": "5/5",
+    "forbidden_probes": 0
+  },
+  "exp4_e2e_handoff": {
+    "plain_handoff": {
+      "writer_included_sha256": "0/3",
+      "detected_stale_overwrite": "3/3",
+      "wrong_actions_or_stale_accepts": 0
+    },
+    "oak_v05b_handoff": {
+      "writer_included_sha256": "3/3",
+      "detected_stale_overwrite": "3/3",
+      "wrong_actions_or_stale_accepts": 0
+    }
+  }
+}

@@ -1,0 +1,3 @@
+{"trial": "trial-b-setup-r1", "group": "b", "task": "b-setup", "condition": null, "rep": 1, "status": "valid", "label": "4/5 machine criteria", "valid": true, "seconds": 129.395, "tool_calls": 25, "check_ran": null, "check_ran_loose": null}
+{"trial": "trial-b-setup-r2", "group": "b", "task": "b-setup", "condition": null, "rep": 2, "status": "valid", "label": "4/5 machine criteria", "valid": true, "seconds": 57.546, "tool_calls": 11, "check_ran": null, "check_ran_loose": null}
+{"trial": "trial-b-setup-r3", "group": "b", "task": "b-setup", "condition": null, "rep": 3, "status": "valid", "label": "5/5 machine criteria", "valid": true, "seconds": 80.559, "tool_calls": 17, "check_ran": null, "check_ran_loose": null}

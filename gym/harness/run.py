@@ -39,7 +39,8 @@ def main() -> int:
 
     for sname in ("code", "prose"):
         p = sub.add_parser(sname, help=f"Run the standardized {sname} gym suite")
-        p.add_argument("--mode", choices=("single", "relay", "all"), default="single")
+        modes = ("single", "scope", "all") if sname == "code" else ("single", "relay", "all")
+        p.add_argument("--mode", choices=modes, default="single")
         p.add_argument("--agents", default="claude_opus_5_5", help="Comma-separated agent IDs")
         p.add_argument("--output", type=Path, default=None)
 

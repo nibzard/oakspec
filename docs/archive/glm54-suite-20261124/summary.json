@@ -1,0 +1,115 @@
+{
+  "model": "zai/glm-5.4",
+  "wall_seconds": 1303.8,
+  "protocol_sha256": {
+    "~/oak/.agents/skills/pi-gondolin-experiments/scripts/run_trial.py": "b5cb3c7eacb0bd96a284bfa982729122c4ac8a82fe4b5c5ed94d73f999067c40",
+    "~/oak/oak-eval/v05-experiments/launch_pi.py": "2fb0e7922ee208e7dfeaaada9597b95e6d6923613e92771bb30b7e9ebd148104",
+    "~/oak/publish/oak-0001-v0.4.txt": "176e265ac882b985681fe64f319bc39fe7eca167359d57fb29dcb09860573d2e",
+    "~/oak/publish/oak-0001.txt": "f4a72b8d917df9e533760b66bb8113e2bbe243b462e9694522408b49151e9c95",
+    "~/oak-tools/pi-gondolin-oakspec.ts": "a71669cd86281c33b6d0f3d7b38854fadea56ce3cd10b8d89901903939afa5ba",
+    "~/oak-tools/pi-gondolin.ts": "641f92ed3bf1ca3dfb5f06a2de9707a612bb6db05a81f75992bdca5500209939",
+    "~/oak/oak-eval/v05-experiments/run_glm54_eval.py": "501bb2411271b324785c1714f18375ed3223aea4189b2015816cb8862be3ed01"
+  },
+  "t1_live_website": {
+    "runs": 3,
+    "s2_pass_all": "3/3",
+    "saved_local_spec": "3/3",
+    "yaml_superseded_postgres": "3/3",
+    "postgres_body_unchanged": "1/3",
+    "invented_invalid_origin": 0
+  },
+  "t2_cold_bootstrap": {
+    "plain": {
+      "runs": 3,
+      "pass_all": 2,
+      "false_verifies": 2,
+      "false_contradicts": 0,
+      "zcode_unverified": 2,
+      "litestream_unverified": 2,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 0,
+      "mean_audit_tokens": 32142,
+      "mean_audit_tool_calls": 6.7
+    },
+    "oak_v04": {
+      "runs": 3,
+      "pass_all": 3,
+      "false_verifies": 0,
+      "false_contradicts": 0,
+      "zcode_unverified": 3,
+      "litestream_unverified": 3,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 0,
+      "mean_audit_tokens": 26477,
+      "mean_audit_tool_calls": 6.3
+    },
+    "oak_v05": {
+      "runs": 3,
+      "pass_all": 1,
+      "false_verifies": 0,
+      "false_contradicts": 0,
+      "zcode_unverified": 1,
+      "litestream_unverified": 1,
+      "db_sqlite": 3,
+      "schema_v4": 3,
+      "saved_local_spec": 3,
+      "mean_audit_tokens": 24293,
+      "mean_audit_tool_calls": 5.7
+    }
+  },
+  "t3_state_vs_intent": {
+    "structured_prose": {
+      "total_pass": "7/9",
+      "by_case": {
+        "c1_unapplied_approval": "3/3",
+        "c2_unapplied_revocation": "2/3",
+        "c3_stale_derivable_constants": "2/3"
+      },
+      "r4_backfires": 0,
+      "forbidden_probes": 2,
+      "mean_tool_calls": 4.3
+    },
+    "oak_v05_tightened": {
+      "total_pass": "9/9",
+      "by_case": {
+        "c1_unapplied_approval": "3/3",
+        "c2_unapplied_revocation": "3/3",
+        "c3_stale_derivable_constants": "3/3"
+      },
+      "r4_backfires": 0,
+      "forbidden_probes": 0,
+      "mean_tool_calls": 4.9
+    }
+  },
+  "t4_param_overwrite_handoff": {
+    "plain_handoff": {
+      "writer_included_sha256": "0/3",
+      "caught_silent_param_corruption": "0/3",
+      "shipped_corrupted_15m": "3/3"
+    },
+    "oak_v05_handoff": {
+      "writer_included_sha256": "3/3",
+      "caught_silent_param_corruption": "3/3",
+      "shipped_corrupted_15m": "0/3"
+    }
+  },
+  "t5_parallel_merge": {
+    "shared_notes": {
+      "conflict_merges": "4/4",
+      "total_resolver_seconds": 109.7,
+      "reader_pass": "2/2"
+    },
+    "oak_v04_file_index": {
+      "conflict_merges": "4/4",
+      "total_resolver_seconds": 129.8,
+      "reader_pass": "1/2"
+    },
+    "oak_v05_folder_index": {
+      "conflict_merges": "0/4",
+      "total_resolver_seconds": 0.0,
+      "reader_pass": "1/2"
+    }
+  }
+}

@@ -16,6 +16,7 @@ sidecar) for:
   detection of conflicting embedded + sidecar `oak` metadata.
 """
 import argparse
+import datetime
 import json
 from pathlib import Path
 import re
@@ -30,6 +31,8 @@ ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}.*)?$")
 VALID_KINDS = {"record", "reference", "spec"}
 VALID_ORIGINS = {"user", "agent", "inferred", "external"}
 REF_FIELDS = ("links", "sources", "superseded_by")
+OAK_KNOWN_KEYS = {"kind", "status", "at", "as_of", "origin", "sources", "links", "superseded_by", "where"}
+OAK_ONLY_KEYS = {"as_of", "superseded_by"}
 SIDECAR_SUFFIX = ".oak.json"
 
 
@@ -95,32 +98,40 @@ def check_knowledge_dir(knowledge_dir: Path, project_root: Path | None = None) -
 
     for f in md_files:
         rel = f.relative_to(root)
-        _, body, oak, conflict = loaded[f]
+        meta, body, oak, conflict = loaded[f]
         if conflict:
             errors.append(f"{rel}: has both frontmatter oak block and {SIDECAR_SUFFIX} sidecar")
+        if isinstance(meta, dict):
+            check_keys = OAK_KNOWN_KEYS if oak is not None else OAK_ONLY_KEYS
+            misplaced = sorted(k for k in meta.keys() if k != "oak" and k in check_keys)
+            if misplaced:
+                errors.append(f"{rel}: OAK field(s) {misplaced} at top-level frontmatter instead of nested under 'oak:'")
         if oak is not None:
             if not isinstance(oak, dict):
                 errors.append(f"{rel}: oak metadata must be a mapping")
                 continue
             kind = oak.get("kind")
-            if kind not in VALID_KINDS:
+            if not isinstance(kind, str) or kind not in VALID_KINDS:
                 errors.append(f"{rel}: C1 invalid or missing kind {kind!r}")
             origin = oak.get("origin")
-            if origin is not None and origin not in VALID_ORIGINS:
+            if origin is not None and (not isinstance(origin, str) or origin not in VALID_ORIGINS):
                 errors.append(f"{rel}: invalid origin {origin!r} (must be one of {sorted(VALID_ORIGINS)} or omitted)")
             at_val = oak.get("at")
             as_of_val = oak.get("as_of")
             if at_val is not None:
                 if kind != "record":
                     errors.append(f"{rel}: C2 'at' is only for records (found on {kind!r})")
-                elif not ISO_DATE_RE.match(str(at_val)):
+                elif not isinstance(at_val, (str, datetime.date, datetime.datetime)) or not ISO_DATE_RE.match(str(at_val)):
                     errors.append(f"{rel}: C2 'at' is not ISO 8601 date: {at_val!r}")
             if as_of_val is not None:
                 if kind == "record":
                     errors.append(f"{rel}: C3 'as_of' is not allowed on records")
-                elif not ISO_DATE_RE.match(str(as_of_val)):
+                elif not isinstance(as_of_val, (str, datetime.date, datetime.datetime)) or not ISO_DATE_RE.match(str(as_of_val)):
                     errors.append(f"{rel}: C3 'as_of' is not ISO 8601 date: {as_of_val!r}")
-            if oak.get("status") == "superseded":
+            status_val = oak.get("status")
+            if status_val is not None and not isinstance(status_val, str):
+                errors.append(f"{rel}: invalid status {status_val!r} (must be a string)")
+            elif status_val == "superseded":
                 sup = oak.get("superseded_by")
                 if not sup or (is_local(str(sup)) and not resolve_ref(f, str(sup)).exists()):
                     errors.append(f"{rel}: C5 superseded resource missing valid superseded_by ({sup!r})")

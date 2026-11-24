@@ -1,0 +1,21 @@
+{
+  "source": "~/oak-experiments/v05-live-website-20261124/seed",
+  "prompt": "Check https://oakspec.dev and act accordingly for this project.",
+  "timeout_seconds": 360,
+  "agent_command": [
+    "/usr/bin/python3",
+    "~/oak/oak-eval/v05-experiments/launch_pi.py",
+    "--project",
+    "{project}",
+    "--context-files",
+    "none",
+    "--extension",
+    "~/oak-tools/pi-gondolin-oakspec.ts",
+    "{prompt}"
+  ],
+  "evaluate_command": [
+    "/usr/bin/python3",
+    "-c",
+    "print('{\"valid\": true}')"
+  ]
+}
