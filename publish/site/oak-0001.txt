@@ -610,11 +610,12 @@ THE CORE
 
 16. CHANGES
 
-  v0.5.1 2026-11-24 Add MIT license and author attribution, THE CORE
-                    one-screen summary, Section 8.3b git bootstrap check,
-                    check_oak.py reference linter with git-versus-as_of
-                    staleness warnings, and Section 14 baseline/null/
-                    caveat and held-out 4-vendor gym results.
+  v0.5.1  2026-11-24  Add MIT license and author attribution, THE CORE
+                      one-screen summary, Section 8.3b git bootstrap
+                      check, check_oak.py reference linter with
+                      git-versus-as_of staleness warnings, and Section
+                      14 baseline, null-result, caveat, and held-out
+                      4-vendor gym results.
   v0.5  2026-11-24  Inline core rules in AGENTS.md and save a local spec
                     copy during setup so offline and sandboxed sessions
                     have them (Section 8, C10). Treat unconfirmed
@@ -649,9 +650,9 @@ THE CORE
 
 17. AUTHOR AND LICENSE
 
-  Author: nibzard (https://github.com/nibzard)
-  Repository: https://github.com/nibzard/oakspec
-  License: MIT License. Free to use, copy, modify, and adopt.
+  Author      nibzard (https://github.com/nibzard)
+  Repository  https://github.com/nibzard/oakspec
+  License     MIT License. Free to use, copy, modify, and adopt.
 
 
 END OF OAK-0001
