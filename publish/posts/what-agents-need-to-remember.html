@@ -7,6 +7,9 @@ description: OAK gives project knowledge a shared home. Our handoff tests helped
 a future agent cannot recover. Point to the source for facts it can check.</li>
 <li><strong>Make the meaning clear.</strong> Say who supplied the information,
 where it applies, and which earlier decision it replaces, if any.</li>
+<li><strong>Make knowledge easy to find and update.</strong> Give readers a
+short index and links that explain what they lead to. When agents work in
+parallel, let each add a separate record.</li>
 <li><strong>Confirm receipt.</strong> Check that the next reader can reach
 the intended version in the shared location.</li>
 </ol>
@@ -44,12 +47,24 @@ Notes mattered more when the owner's decision was available only through
 the handoff. Plain Markdown also carried the approval through once we
 gave decisions and observed settings separate places.</p>
 
-<p>File layout helped with another problem. Independent agents editing one
-shared file were more likely to hit a merge conflict. Separate plain
-Markdown and OAK records both merged cleanly in a follow-up. That gives
-me a practical default. Use readable notes, and let concurrent writers
-add separate records. Add a machine-readable field when tools have a
-specific job for it. <a href="/evidence.txt">Pilot evidence</a></p>
+<h2>Make knowledge easy to find and update</h2>
+
+<p>In the parallel-writing pilot, separate dated records produced 6 merge
+conflicts. One shared notes file produced 24. Separate plain Markdown and
+OAK records both merged cleanly in a follow-up. When agents work in
+parallel, I'd give each decision its own file and keep its scope and
+reason with it. The pilot compared layouts. File length, folder depth,
+and wiki-link syntax are still open questions.
+<a href="/evidence.txt">Pilot evidence</a></p>
+
+<p>Start at <code>knowledge/index.md</code>. Keep it short by linking to
+groups of records. A writer can then add a record without editing the
+index on every branch. Add folders when the notes group naturally by
+project or topic. Put the relationship in the link text. For example, write
+<code>[Replaces the original preview approval](records/preview-approval.md)</code>.
+That tells the next reader why the original matters.</p>
+
+<h2>Confirm receipt</h2>
 
 <p>The delivery test made the last rule concrete. We simulated a decision
 stuck in an unmerged worktree and a stale import that overwrote a newer
@@ -63,14 +78,14 @@ copy.</p>
 
 <p>My reading of Rich Sutton's Bitter Lesson is that we should expect models
 to get better at finding evidence and working through inconsistencies.
-Give them room to choose how they search and reason. Spend our effort
-preserving the facts they would otherwise have to guess. A smarter agent
-may need less help reading a note. It still needs the editor's decision
-to reach its worktree.
+Give them a predictable place to start and room to choose how they
+search and reason. Preserve the facts and relationships they would
+otherwise have to guess. A smarter agent may need less help reading a
+note. It still needs the editor's decision to reach its worktree.
 <a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">The Bitter Lesson</a></p>
 
 <p>That's the job I want one specification file to do. It gives agents
-shared rules for what to keep, how to read it, and how to check that it
-arrived. For the next version, I'd test whether a stable record identifier
+shared rules for keeping, finding, and handing off decisions. For the
+next version, I'd test whether a stable record identifier
 helps two independent tools find the same decision after a rename or
 transfer. That would give any extra structure a clear reason to be there.</p>

@@ -1,5 +1,5 @@
-OAK-0001 evidence                                              2026-11-19
-What the tests behind OAK-0001 v0.4 found, including null results
+OAK-0001 evidence                                              2026-11-24
+What the tests behind OAK-0001 v0.4 and v0.5 found, including null results
 https://oakspec.dev/evidence.txt
 
 SCOPE
@@ -105,15 +105,66 @@ SCOPE
   separate the conditions.
 
 
-7. WHAT THIS MEANS FOR OAK
+7. V0.5 COLD-START, PROBE, RECEIPT, AND MERGE CHECKS (2026-11-24)
 
-  - Short reading rules changed agent behavior more than any metadata.
+  114 Gondolin VM runs across two batches (GLM 5.3, no guest web access,
+  host ~/.agents/AGENTS.md blocked):
+
+  Cold-start setup -> offline audit (neutral prompt, no definition of
+  "verified", two host-scope questions per run):
+
+                                false verify   false contradict   tokens
+  Plain setup + AGENTS.md           3/6              1/6          16,172
+  OAK v0.4 setup (URL pointer)      5/6              1/6          14,517
+  OAK v0.5 initial                  1/6              1/6          12,614
+  OAK v0.5 refined (sandbox R5)    0/10             0/10          12,204
+
+  v0.4's URL-only pointer gave no protection offline because the reader
+  could not fetch the spec. Telling readers to treat unconfirmed
+  workspaces as sandboxes (R5) eliminated both false verifications and
+  false contradictions.
+
+  State versus intent and forbidden probes: all arms passed unapplied
+  approval and stale-constant checks (9/9 each). On an unapplied
+  revocation, 2 of 3 initial v0.5 runs invoked the disabled production
+  script after editing config "to confirm it was disabled." Adding R1's
+  rule against probing unapproved or revoked targets cut probes to 0/5.
+
+  Handoff receipts (W9, R9): when a handoff message already listed a path
+  and sha256 digest, readers caught missing files and corrupted drafts
+  with and without R9 (9/9 each). In an end-to-end two-session handoff,
+  3 of 3 OAK v0.5 writers emitted sha256 digests in HANDOFF.md versus 0
+  of 3 plain writers; both arms blocked a contradictory draft overwrite
+  (3/3) when HANDOFF.md also stated the decision in prose.
+
+  Three-way parallel merges (2 rounds per layout, 2 merges per round):
+
+                                conflicts   resolver time   reader recall
+  One shared NOTES.md              4/4          81.0 s        6/6 (2/2)
+  v0.4 per-file index.md           4/4          87.3 s        5/6 (1/2)
+  v0.5 folder-linked index.md      0/4           0.0 s        6/6 (2/2)
+
+  In v0.4 round 1, an index.md conflict resolver paraphrased "once the
+  DPA was signed" to "once the DPA is signed," causing the reader to
+  leave an approved flag false. Linking records/ as a folder avoided
+  every conflict.
+
+
+8. WHAT THIS MEANS FOR OAK
+
+  - Short reading rules changed agent behavior more than any metadata,
+    but only if setup puts them in local context (AGENTS.md) for offline
+    sessions.
+  - Verification rules need two guardrails: treat unconfirmed workspaces
+    as sandboxes (R5), and never probe revoked targets to test failure
+    (R1).
+  - Linking folders rather than individual records from index.md prevents
+    both merge conflicts and resolver paraphrasing errors.
   - Copied derivable state is waste, not the main danger, for capable
-    agents.
-  - Notes earn their place for facts nobody can re-derive.
-  - YAML is one way to write the facts, not a requirement.
+    agents. Notes earn their place for facts nobody can re-derive.
+  - YAML is for deterministic tools and link checks, not LLM reading.
 
-  Open: other model families, decision loss when the note is the only
-  record, and loss outside git merges.
+  Open: other model families, long-horizon consolidation with renames,
+  and parameter-only overwrites where HANDOFF.md does not repeat prose.
 
 END OF EVIDENCE

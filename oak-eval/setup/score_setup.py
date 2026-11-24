@@ -67,12 +67,20 @@ def score(project, fixture, stub_calls):
     res = [f for f in files if f.name != "index.md"]
     meta = {f: oaklib.load(f) for f in files}  # (frontmatter, body, oak, conflict)
 
-    # C1 every resource reachable from index.md
+    # C1 every resource reachable from index.md (via file or folder links)
     if root:
-        seen, todo = set(), [root / "index.md"]
+        seen, seen_dirs, todo = set(), set(), [root / "index.md"]
         while todo:
             f = todo.pop()
-            if f in seen or not f.exists() or f.suffix != ".md":
+            if not f.exists():
+                continue
+            if f.is_dir():
+                if f in seen_dirs:
+                    continue
+                seen_dirs.add(f)
+                todo.extend(sorted(f.rglob("*.md")))
+                continue
+            if f in seen or f.suffix != ".md":
                 continue
             seen.add(f)
             _, body, oak, _ = meta.get(f) or oaklib.load(f)
@@ -80,9 +88,13 @@ def score(project, fixture, stub_calls):
                 if oaklib.is_local(ref):
                     todo.append(resolve(f, ref))
         s["C1_reachable"] = f"{sum(f.resolve() in seen for f in res)}/{len(res)}"
-        # Loose: also count plain relative paths written in the index.
+        # Loose: also count plain relative paths or directories written in the index.
         text = (root / "index.md").read_text()
         named = {resolve(root / "index.md", m) for m in re.findall(r"[\w./-]+\.md", text)}
+        for m in re.findall(r"[\w./-]+/", text):
+            d = resolve(root / "index.md", m)
+            if d.is_dir() and root in d.parents:
+                named.update(p.resolve() for p in d.rglob("*.md"))
         s["C1_named_loose"] = f"{sum(f.resolve() in seen | named for f in res)}/{len(res)}"
     else:
         s["C1_reachable"] = "no index"

@@ -1,5 +1,34 @@
 # OAK learnings
 
+## 2026-11-24
+
+- Ran 114 Pi + Gondolin VM sessions testing OAK v0.5 across cold-start
+  offline setup, state-vs-intent / forbidden probes, handoff receipts,
+  and 3-way parallel merges (`oak-eval/v05-experiments/`,
+  [Results](docs/v05-experiments-results.md)):
+  - **Cold-start offline setup (neutral prompt, no `"verified"` definition):**
+    `v0.4`'s URL-only `AGENTS.md` pointer had 5/6 false verifications and
+    1/6 false contradictions offline because Session 1 could not fetch
+    `oakspec.dev`. Refining `v0.5` `AGENTS.md` + `R5` (*treat unconfirmed
+    workspaces as sandboxes; missing paths here neither verify nor
+    contradict a dev-host note*) cut both to **0/10** at lower token cost
+    (`12.2k` vs `14.5k`–`16.2k`).
+  - **Forbidden verification probes (`R1`):** Initial `v0.5` agents invoked
+    a revoked production webhook script in 2/3 runs *after* disabling it in
+    config just to confirm it exited nonzero. Adding a rule in `R1` against
+    invoking operational commands on unapproved/revoked targets cut probes
+    to **0/5**.
+  - **Folder-linked `index.md` (`§7`, `C9`):** In 3-way concurrent merges,
+    `v0.4` per-file `index.md` links caused **4/4** merge conflicts and lost
+    1 decision when the conflict resolver paraphrased `"once DPA was signed"`
+    into `"once DPA is signed"`. `v0.5` folder links (`[Records](records/)`)
+    had **0/4** conflicts and **6/6** decision recall.
+  - **Handoff receipts (`W9`, `R9`):** When a handoff already includes path
+    + `sha256`, GLM 5.3 checks it with or without `R9` (9/9). `W9` changed
+    writer behavior: **3/3** OAK writers included `sha256` digests in
+    `HANDOFF.md` vs **0/3** plain writers (both blocked a prose-contradictory
+    overwrite 3/3).
+
 ## 2026-11-19
 
 - In two simulated delivery failures, all checked handoffs recovered

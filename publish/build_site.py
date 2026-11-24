@@ -4,8 +4,8 @@
 usage: build_site.py
 
 Writes publish/site/: index.html (the spec as reflowable HTML), oak-0001.txt
-(the raw text, for agents), evidence.txt, the archived oak-0001-v0.3.txt, and
-llms.txt (a pointer for agents).
+(the raw text, for agents), evidence.txt, the archived oak-0001-v0.4.txt and
+oak-0001-v0.3.txt, and llms.txt (a pointer for agents).
 
 The text uses a small set of plain-text conventions. This script turns them
 into HTML so the page reflows on small screens:
@@ -127,6 +127,7 @@ To set up OAK memory, read the spec and follow Section 8 (Set up):
 
 - [OAK-0001 (plain text)]({url}/oak-0001.txt)
 - [Evidence behind the spec]({url}/evidence.txt)
+- [Previous version, v0.4]({url}/oak-0001-v0.4.txt)
 - [Previous version, v0.3]({url}/oak-0001-v0.3.txt)
 - [Blog]({url}/blog/)
 """
@@ -305,7 +306,7 @@ def main():
     SITE.mkdir()
     (SITE / "index.html").write_text(render(SPEC.read_text()))
     shutil.copy2(SPEC, SITE / "oak-0001.txt")
-    for extra in ("oak-0001-v0.3.txt", "evidence.txt"):
+    for extra in ("oak-0001-v0.4.txt", "oak-0001-v0.3.txt", "evidence.txt"):
         shutil.copy2(HERE / extra, SITE / extra)
     (SITE / "llms.txt").write_text(LLMS.format(url=URL))
     blog.build(SITE, BASE_CSS, URL)
