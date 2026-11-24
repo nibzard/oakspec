@@ -1,14 +1,29 @@
 OAK-0001 evidence                                              2026-11-24
-What the tests behind OAK-0001 v0.4 and v0.5 found, including null results
+What the tests behind OAK-0001 v0.2 to v0.5.1 found, including null results
 https://oakspec.dev/evidence.txt
 
-SCOPE
+SCOPE AND SCORING
 
-  All tests below used one person's projects and agent sessions. Most
-  agent runs used one model family (GLM 5.3). Each test is a pilot. Read
-  the counts as descriptions, not as proof. Agent runs used Pi with tools
-  in a fresh Gondolin guest and no guest web access, unless noted.
-  Sanitized run-level tables live in docs/archive/ in the repository.
+  Author: nibzard (MIT License, https://github.com/nibzard/oakspec).
+  Every trial below was scored outside the sandbox by deterministic
+  Python evaluators, pytest suites, and git tree/diff checks against
+  frozen answer keys (never by an LLM judge).
+
+  Sections 2 to 7 ran Pi (GLM 5.3 and GLM 5.4) in fresh air-gapped
+  Gondolin micro-VMs on the author's repositories; except for frozen
+  v0.2 in Section 2, those pilots iteratively shaped v0.3 through v0.5.
+  Section 8 then tested frozen v0.5 (no rule edits during evaluation)
+  across four agent CLIs and model families on two held-out third-party
+  substrates (pallets/itsdangerous and qntm's SCP Antimemetics tales).
+
+  Code, scorers, and run-level data:
+  - Harness, substrates, and scorers:
+    https://github.com/nibzard/oakspec/tree/main/gym
+  - Reference linter: https://oakspec.dev/check_oak.py
+  - Sanitized run-level .jsonl/.json tables and defect audit:
+    https://github.com/nibzard/oakspec/tree/main/docs/archive
+    (Raw turn transcripts from private repos stay offline; external-repo
+    gym runs are reproducible via python3 gym/harness/run.py.)
 
 
 1. WHAT FAILS IN REAL MEMORY

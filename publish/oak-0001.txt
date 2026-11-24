@@ -1,5 +1,5 @@
 OAK-0001: Open Agent Knowledge                                  Experimental
-A plain-text convention for memory that people and AI agents share   v0.5
+A plain-text convention for memory that people and AI agents share  v0.5.1
 https://oakspec.dev/oak-0001.txt                                  2026-11-24
 
 STATUS OF THIS DOCUMENT
@@ -47,9 +47,14 @@ THE CORE
   - A note about one machine is read on another machine as if it applied.
   - A note written in a branch or sandbox never reaches the next reader.
 
-  An agent can re-read code, history, and data at any time. It cannot
-  recover what nobody wrote down: why a decision was made, who approved
-  it, what was withdrawn, and what is true on a machine it cannot reach.
+  An agent can re-read code, history, and data at any time. In tests,
+  capable agents checked code and git on their own when copied state
+  went stale, so copied state in notes is mostly waste. Real mistakes
+  happened on what cannot be re-derived from the workspace: an agent in
+  a sandbox treated a local check as proof about another machine, probed
+  a revoked target to confirm it failed, mistook an earlier agent's
+  cleanup plan for an approved scope cut, or lost a note across an
+  unmerged branch or overwritten handoff.
 
   The rule of OAK: keep what cannot be re-derived. Point to what can.
 
@@ -547,42 +552,49 @@ THE CORE
   where information came from (sources, origin). OAK applies a small part
   of each to memory that people and agents share.
 
-  Evidence so far (2026-11-24). Early pilots ran GLM 5.3 and GLM 5.4 in
-  isolated micro-VMs on the author's repositories; follow-up gyms tested
-  Claude Code (Opus 5.5), Codex (GPT-6.2 Sol), Antigravity (Gemini 4
-  Neon), and Pi (GLM 5.4) on pallets/itsdangerous and qntm's SCP
-  Antimemetics Division tales. Read the counts as pilots, not proofs.
+  Evidence so far (2026-11-24). Every trial was scored outside the
+  sandbox by deterministic Python scripts, pytest suites, and git checks
+  (never an LLM judge). Micro-VM pilots on the author's repositories
+  (GLM 5.3, GLM 5.4) shaped v0.3 through v0.5; held-out gyms then ran
+  frozen v0.5 across Claude Opus 5.5, GPT-6.2 Sol, Gemini 4 Neon, and
+  GLM 5.4 on pallets/itsdangerous and qntm's SCP Antimemetics tales.
 
-  - An audit of three real projects found 46 stale or wrong notes. Most
-    were true when written and nobody revisited them. Section 9, the
-    rule against copied state, and the linter's git-versus-as_of warning
-    exist because of this.
-  - Agents on those real projects checked derivable state at its source
-    and were not misled by stale copies. Notes changed the outcome only
-    for facts the agent could not check. Section 3 follows from this.
-  - Agents in a sandbox often treated a check in their own environment as
-    a check of the dev host. Reading rules R4 to R6 cut these errors from
-    12 to 14 in 30 trials to 1 or 2. In a cold-start setup-to-audit test
-    with a neutral prompt and no web access, v0.4's URL-only AGENTS.md
-    pointer had 5 false verifications and 1 false contradiction in 6
-    checks, whereas v0.5's inlined sandbox-default rules had 0 of each in
-    10 checks.
-  - Without R1's rule against test-probing revoked targets, agents
-    invoked a revoked webhook command in 2 of 3 trials merely to confirm
-    that config blocked it; with the rule, probes dropped to 0 of 5.
-  - YAML and equivalent sentences gave the same results when the prose
-    already stated every fact. When an unattributed cleanup plan proposed
-    cutting an active requirement (identical prose in both arms), marking
-    kind: spec, origin: user versus kind: record, origin: agent kept the
-    requirement in 4 of 4 model families versus 2 of 4 in plain NOTES.md.
-  - In 3-way parallel writer merges, per-file index.md links caused 4 of
-    4 branch conflicts and 1 lost decision during conflict resolution,
-    while linking records/ as a folder caused 0 of 4 conflicts across
-    both micro-VM and 4-vendor code and prose relays. Silent edits across
-    non-git handoffs were blocked when writers listed sha256 digests (W9).
+  - Sandbox scope (R4-R6). On six dev-host questions in an air-gapped
+    VM, R4-R6 cut false verifications from 12-14 of 30 (plain notes) to
+    0-2 of 30, even without YAML; caveat: that prompt defined "verified"
+    as "checked in your environment", inviting the error. Under a
+    neutral prompt after cold setup, plain setup + AGENTS.md had 3 of 6
+    false verifications, v0.4's URL-only pointer did worse (5 of 6),
+    v0.5 initial had 1 of 6 (plus 1 false contradiction), and v0.5 tuned
+    on that test had 0 of 10 (then 0 of 6 versus 2 of 6 plain on GLM
+    5.4, and 0 of 8 held-out across four model families).
+  - Revoked targets (R1). On an unapplied revocation, agents ran a
+    disabled production script in 2 of 3 initial v0.5 trials merely to
+    confirm it failed; adding R1 cut probes to 0 of 5 (and 0 of 9 versus
+    2 of 9 for structured prose on GLM 5.4).
+  - Null results and copied state. Frozen v0.2 showed no accuracy gain
+    on 120 repository questions (0.918 OAK versus 0.915 control), and
+    v0.4 deletion/revocation/injection checks scored 8 of 9 OAK versus
+    9 of 9 plain. Across 24 stale-state runs, agents checked code and
+    git on their own; copied state was waste, not the main danger (46
+    stale notes found in three audited projects, including 4 born-stale
+    OAK setup notes that motivated Section 8.3b and the linter).
+  - YAML versus prose. YAML and equivalent sentences tied whenever prose
+    stated every fact. On a held-out refactor where an unattributed
+    cleanup plan proposed cutting an active requirement (identical prose
+    bodies), kind: spec, origin: user versus kind: record, origin: agent
+    kept the requirement in 4 of 4 model families versus 2 of 4 plain.
+  - Merges and handoffs. Folder-linked index.md had 0 of 4 branch
+    conflicts versus 4 of 4 (and 1 resolver paraphrase error) for
+    per-file index links. Once a handoff listed sha256 digests, readers
+    caught tampering with or without R9 (9 of 9 each); W9 mattered by
+    making writers emit digests (3 of 3 OAK handoffs blocked a silent
+    45m-to-15m overwrite versus 0 of 3 plain; replicated on an exported
+    non-git prose bundle).
 
-  Summary of every test, null results, and archived run-level tables:
+  Methodology, scorer code, reproducible gym, and archived run tables:
   https://oakspec.dev/evidence.txt
+  https://github.com/nibzard/oakspec/tree/main/gym
   https://github.com/nibzard/oakspec/tree/main/docs/archive
 
 
@@ -598,6 +610,11 @@ THE CORE
 
 16. CHANGES
 
+  v0.5.1 2026-11-24 Add MIT license and author attribution, THE CORE
+                    one-screen summary, Section 8.3b git bootstrap check,
+                    check_oak.py reference linter with git-versus-as_of
+                    staleness warnings, and Section 14 baseline/null/
+                    caveat and held-out 4-vendor gym results.
   v0.5  2026-11-24  Inline core rules in AGENTS.md and save a local spec
                     copy during setup so offline and sandboxed sessions
                     have them (Section 8, C10). Treat unconfirmed

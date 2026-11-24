@@ -5,7 +5,7 @@ A plain-text convention for memory that people and AI agents share.
 ## Repository layout
 
 - **Specification & site (`publish/`):**
-  - Published spec (v0.5): [`publish/oak-0001.txt`](publish/oak-0001.txt) — live at https://oakspec.dev and https://oakspec.dev/oak-0001.txt
+  - Published spec (v0.5.1): [`publish/oak-0001.txt`](publish/oak-0001.txt) — live at https://oakspec.dev and https://oakspec.dev/oak-0001.txt
   - Evidence summary: [`publish/evidence.txt`](publish/evidence.txt) — https://oakspec.dev/evidence.txt
   - Blog: [`publish/posts/`](publish/posts/), built by [`publish/blog.py`](publish/blog.py) — https://oakspec.dev/blog/
 - **Standardized OAK Gym (`gym/`):**
