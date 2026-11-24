@@ -1,6 +1,7 @@
 """Shared utilities for OAK v0.5 Pi + Gondolin experiments."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -11,6 +12,7 @@ RUNNER = REPO_ROOT / ".agents/skills/pi-gondolin-experiments/scripts/run_trial.p
 LAUNCHER = HERE / "launch_pi.py"
 SPEC_V04 = REPO_ROOT / "publish/oak-0001-v0.4.txt"
 SPEC_V05 = REPO_ROOT / "publish/oak-0001.txt"
+DEFAULT_MODEL = os.environ.get("OAK_EVAL_MODEL", "glm-5.3")
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -29,7 +31,7 @@ def write_files(root: Path, files: dict[str, str]) -> None:
         target.write_text(content)
 
 
-def agent_command(context_files: str = "none", model: str = "glm-5.3") -> list[str]:
+def agent_command(context_files: str = "none", model: str | None = None) -> list[str]:
     return [
         sys.executable,
         str(LAUNCHER),
@@ -38,7 +40,7 @@ def agent_command(context_files: str = "none", model: str = "glm-5.3") -> list[s
         "--context-files",
         context_files,
         "--model",
-        model,
+        model or DEFAULT_MODEL,
         "{prompt}",
     ]
 
@@ -81,7 +83,7 @@ def run_trial(
     output_dir: Path,
     evaluate_command: list[str] | None = None,
     context_files: str = "none",
-    model: str = "glm-5.3",
+    model: str | None = None,
     timeout_seconds: int = 300,
 ) -> dict:
     output_dir = output_dir.resolve()

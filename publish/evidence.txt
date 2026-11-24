@@ -149,6 +149,21 @@ SCOPE
   leave an approved flag false. Linking records/ as a folder avoided
   every conflict.
 
+  GLM 5.4 replication (~78 Gondolin VM runs on tightened v0.5):
+  - Pointed cold at https://oakspec.dev ("act accordingly"), 3 of 3 runs
+    set up OAK, marked replaced records superseded in YAML without
+    invalid origins, and passed all 5 downstream air-gapped checks.
+  - On a silent parameter overwrite (45m reverted to 15m inside a note
+    when HANDOFF.md did not repeat numbers), 3 of 3 OAK v0.5 handoffs
+    emitted sha256 digests and blocked the corrupted setting, while 0 of
+    3 plain handoffs emitted digests and 3 of 3 shipped the wrong 15m
+    delay.
+  - On state-versus-intent cases, OAK v0.5 passed 9 of 9 with 0
+    forbidden probes, versus 7 of 9 (2 forbidden production probes) for
+    structured prose. On host-scope checks, GLM 5.4 made fewer baseline
+    errors than GLM 5.3, though plain setup still had 2 of 6 false
+    verifications versus 0 of 6 for OAK v0.5 (24% fewer tokens).
+
 
 8. WHAT THIS MEANS FOR OAK
 

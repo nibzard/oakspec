@@ -36,6 +36,11 @@ figure.chart th { color: #55534d; }
 .posts { list-style: none; padding: 0; }
 .posts li { margin-bottom: 1.4rem; }
 .posts .meta { display: block; }
+.table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+table.post-table { width: 100%; border-collapse: collapse; font-size: .86rem; line-height: 1.45; }
+table.post-table th, table.post-table td { text-align: left; padding: .35rem .7rem .35rem 0;
+  border-bottom: 1px solid #e4e0d5; vertical-align: top; }
+table.post-table th { color: #55534d; font-weight: 600; border-bottom: 1px solid #cbc5b6; }
 """
 
 
@@ -187,7 +192,108 @@ def chart_audit():
             table(["Kind of defect", "Count"], AUDIT) + "</figure>")
 
 
-CHARTS = {"replication": chart_replication, "waffle": chart_waffle, "audit": chart_audit}
+def chart_relay():
+    w, h = 576, 196
+    box_bg = "#f1eee5"
+    parts = [
+        f'<svg viewBox="0 0 {w} {h}" role="img" aria-labelledby="rel-t">',
+        '<title id="rel-t">Four-agent cross-vendor relay across parallel Git branches</title>',
+        '<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">'
+        f'<path d="M 0 1 L 8 5 L 0 9 z" fill="{INK2}"/></marker></defs>',
+    ]
+
+    def node(x, y, bw, bh, head, sub1, sub2, border=INK, sw=1.2, dash=""):
+        da = f' stroke-dasharray="{dash}"' if dash else ""
+        parts.append(
+            f'<rect x="{x}" y="{y}" width="{bw}" height="{bh}" rx="5" '
+            f'fill="{box_bg}" stroke="{border}" stroke-width="{sw}"{da}/>'
+        )
+        parts.append(svg_text(x + 10, y + 19, head, 11.5, INK, weight="600"))
+        parts.append(svg_text(x + 10, y + 35, sub1, 10.5, INK2))
+        parts.append(svg_text(x + 10, y + 50, sub2, 10.5, INK2))
+
+    # Stage 1 -> Stage 2a / 2b -> Host Merge + Fault -> Stage 3
+    node(2, 66, 124, 62, "1. Claude Code", "Opus 5.5", "Setup + v1 code")
+    node(150, 16, 136, 62, "2a. Codex", "GPT-6.2 Sol", "Revoke SHA-1 branch")
+    node(150, 116, 136, 62, "2b. Pi", "GLM 5.4", "120s cap + HANDOFF")
+    node(310, 56, 120, 82, "Host git merge", "OAK: 0 conflicts", "Plain: NOTES.md", border=ORANGE, sw=1.5, dash="4 3")
+    parts.append(svg_text(320, 124, "+ 120s -> 300s edit", 10.5, ORANGE, weight="600"))
+    node(454, 66, 120, 62, "3. Antigravity", "Gemini 4 Neon", "Cold release gate", border=BLUE, sw=1.6)
+
+    # Connectors
+    arrows = [
+        (126, 90, 148, 48),
+        (126, 104, 148, 146),
+        (286, 48, 308, 86),
+        (286, 146, 308, 108),
+        (430, 97, 452, 97),
+    ]
+    for x1, y1, x2, y2 in arrows:
+        parts.append(
+            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{INK2}" '
+            'stroke-width="1.3" marker-end="url(#arr)"/>'
+        )
+    parts.append("</svg>")
+    return (
+        '<figure class="chart"><div class="plot">' + "".join(parts) + "</div>"
+        "<figcaption>Phase 2 relay on <code>pallets/itsdangerous</code>: four agent CLIs "
+        "pass one repo across two parallel Git branches and an edited note.</figcaption></figure>"
+    )
+
+
+COORDINATION = [
+    ("Parallel git merge conflicts (9 merges)", 0, 9, 9, "0/9", "9/9"),
+    ("Silent number change missed outside Git", 0, 3, 3, "0/3", "3/3"),
+    ("GLM 5.4 banned probes + false verifies", 0, 4, 15, "0/15", "4/15"),
+]
+
+
+def chart_coordination():
+    w, left, right, top, row_h = 576, 236, 52, 28, 48
+    h = top + row_h * len(COORDINATION) + 42
+    span = w - left - right
+    parts = [
+        f'<svg viewBox="0 0 {w} {h}" role="img" aria-labelledby="coord-t">',
+        '<title id="coord-t">Coordination and scope failures: OAK v0.5 versus Plain Markdown</title>',
+    ]
+    for pct, label in ((0, "0%"), (0.5, "50%"), (1.0, "100%")):
+        xp = left + span * pct
+        parts.append(f'<line x1="{xp}" y1="{top - 8}" x2="{xp}" y2="{h - 34}" stroke="{GRID}" stroke-width="1"/>')
+        parts.append(svg_text(xp, h - 18, label, 11, INK2, "middle"))
+    for i, (label, oak_v, plain_v, denom, oak_s, plain_s) in enumerate(COORDINATION):
+        y = top + i * row_h
+        parts.append(svg_text(0, y + 18, label, 12.2, INK))
+        # OAK bar (top, blue)
+        ow = max(3, span * (oak_v / denom))
+        parts.append(f'<rect x="{left}" y="{y + 3}" width="{ow}" height="12" rx="2" fill="{BLUE}"/>')
+        parts.append(svg_text(left + ow + 6, y + 13, f"OAK {oak_s}", 11, BLUE, weight="600"))
+        # Plain bar (bottom, orange)
+        pw = max(3, span * (plain_v / denom))
+        parts.append(f'<rect x="{left}" y="{y + 20}" width="{pw}" height="12" rx="2" fill="{ORANGE}"/>')
+        parts.append(svg_text(left + pw + 6, y + 30, plain_s, 11, INK))
+    ly = h - 4
+    parts.append(f'<rect x="0" y="{ly - 10}" width="11" height="11" rx="2" fill="{BLUE}"/>')
+    parts.append(svg_text(16, ly, "OAK v0.5", 11.5, INK))
+    parts.append(f'<rect x="92" y="{ly - 10}" width="11" height="11" rx="2" fill="{ORANGE}"/>')
+    parts.append(svg_text(108, ly, "Plain / shared Markdown (fewer failures is better)", 11.5, INK))
+    parts.append("</svg>")
+    rows = [(lbl, oak_s, plain_s) for lbl, _, _, _, oak_s, plain_s in COORDINATION]
+    return (
+        '<figure class="chart"><div class="plot">' + "".join(parts) + "</div>"
+        "<figcaption>Failure rates across the 2026-11-24 parallel-merge, non-Git handoff, "
+        "and GLM 5.4 boundary tests.</figcaption>"
+        + table(["Measure", "OAK v0.5", "Plain / shared Markdown"], rows)
+        + "</figure>"
+    )
+
+
+CHARTS = {
+    "replication": chart_replication,
+    "waffle": chart_waffle,
+    "audit": chart_audit,
+    "relay": chart_relay,
+    "coordination": chart_coordination,
+}
 
 
 def load_posts():
@@ -199,6 +305,7 @@ def load_posts():
         meta["slug"] = path.stem
         meta["body"] = re.sub(r"\{\{chart:(\w+)\}\}", lambda m: CHARTS[m.group(1)](), body)
         posts.append(meta)
+    posts.sort(key=lambda p: (p["date"], p["slug"]), reverse=True)
     return posts
 
 

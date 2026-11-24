@@ -12,7 +12,7 @@ from pathlib import Path
 NODE = "/home/agent/.local/share/mise/installs/node/24.18.0/bin/node"
 PI = "/home/agent/oak-tools/node_modules/.bin/pi"
 GONDOLIN_EXT = "/home/agent/oak-tools/pi-gondolin.ts"
-AGENT_DIR = "/home/agent/.config/oak-pi-agent"
+AGENT_DIR = os.environ.get("OAK_PI_AGENT_DIR", "/home/agent/.config/oak-pi-agent")
 
 
 def main():

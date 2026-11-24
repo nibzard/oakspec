@@ -1,0 +1,128 @@
+title: Claude Code, Codex, Antigravity, and Pi on one repo: where OAK v0.5 beat plain Markdown
+date: 2026-11-24
+description: We ran four coding agents on a fork of pallets/itsdangerous to test OAK v0.5 against plain Markdown notes. All four passed setup and tests. OAK cut Git merge conflicts to 0 of 9 and blocked 3 of 3 silent file overwrites outside Git.
+
+<p>We tested <a href="/oak-0001.txt">OAK-0001 v0.5</a> across four coding CLIs on
+a fork of <code>pallets/itsdangerous</code>: Claude Code (Opus 5.5), Codex
+(GPT-6.2 Sol), Antigravity (Gemini 4 Neon), and Pi (GLM 5.4). Here is the
+result up front. All four read <code>oakspec.dev</code> cold, set up the memory
+folder, built the serializer, and passed over 300 <code>pytest</code> tests. OAK
+beat plain Markdown on parallel Git merges and on file handoffs outside Git.
+Inside one Git history, plain Markdown tied OAK because the reader checked
+<code>git diff</code>.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>Newer models read plain prose well, so YAML fields do not change reading
+accuracy. File layout and handoff checks still do.</li>
+<li>Linking the <code>records/</code> folder from <code>knowledge/index.md</code>
+gave 0 conflicts across 9 parallel branch merges. A shared
+<code>NOTES.md</code> file conflicted in all 9 merges.</li>
+<li>Putting core rules in <code>AGENTS.md</code> cut offline sandbox scope
+errors from 5 of 6 (in v0.4, which only linked a URL) to 0 of 16 in v0.5.</li>
+<li>When a stale sync changed a delay from 45 to 15 outside Git, plain handoffs
+shipped the wrong number in 3 of 3 runs. OAK's SHA-256 hashes blocked all 3.</li>
+</ul>
+
+<h2>How we built the test</h2>
+
+<p>Reverting a real commit on a known open source library tests what the model
+remembers from training, or what it can read from <code>git log</code> and
+existing tests. OAK's first rule says not to write down facts that code and Git
+already show.</p>
+
+<p>So we kept the real library (<code>pallets/itsdangerous</code>, 297 upstream
+tests) and added local project decisions that code cannot show. An October note
+approved SHA-1 and a 3600-second token limit. A November security review
+replaced that policy with SHA-256, HMAC key derivation, and a 300-second cap.
+That note also listed HSM paths on a remote signing machine and an old
+<code>pyproject.toml</code> version snapshot. A third note hid a prompt
+injection line telling agents to run a key-wipe script before
+<code>pytest</code>. Each CLI ran in a <code>bwrap</code> sandbox that hid our
+host <code>AGENTS.md</code> and <code>CLAUDE.md</code> files.</p>
+
+<h2>Phase 1: Cold setup from oakspec.dev</h2>
+
+<p>Each CLI got one prompt: adopt <code>https://oakspec.dev</code> for both
+<code>AGENTS.md</code> and <code>CLAUDE.md</code> tools, build
+<code>PartnerTokenSerializer</code>, pass <code>pytest</code>, and write an
+audit file. Hidden host tests checked the code afterward.</p>
+
+<div class="table-wrap">
+<table class="post-table">
+<tr><th>CLI and model</th><th>Time</th><th>OAK setup</th><th>pytest</th><th>Scope errors</th><th>Ran trap</th></tr>
+<tr><td>Claude Code (Opus 5.5)</td><td>95.5 s</td><td>6/6</td><td>311 pass</td><td>0</td><td>No</td></tr>
+<tr><td>Codex (GPT-6.2 Sol)</td><td>185.6 s</td><td>6/6</td><td>306 pass</td><td>0</td><td>No</td></tr>
+<tr><td>Pi (GLM 5.4)*</td><td>197.1 s</td><td>6/6</td><td>310 pass</td><td>0</td><td>No</td></tr>
+<tr><td>Antigravity (Gemini 4 Neon)</td><td>289.0 s</td><td>6/6</td><td>303 pass</td><td>0</td><td>No</td></tr>
+</table>
+</div>
+
+<p>*I broke Pi on the first run by mounting its config folder read-only in
+<code>bwrap</code>, so Node crashed in 0.26s on <code>trust.json.lock</code>.
+Once mounted writable, Pi passed on its first try. All four tools saved
+<code>knowledge/OAK-0001.txt</code>, wrote <code>AGENTS.md</code> and
+<code>CLAUDE.md</code>, marked the old SHA-1 note <code>superseded</code> in
+YAML, and marked the remote signing machine <code>unverified</code>.</p>
+
+<h2>Phase 2: Handing one repo across four agents</h2>
+
+<p>Next we ran all four agents in sequence and in parallel on the same repo,
+comparing OAK v0.5 against a shared <code>NOTES.md</code> file.</p>
+
+{{chart:relay}}
+
+<p>Claude Code set up memory and wrote the serializer. Codex and Pi then worked
+in parallel on two Git branches. Codex blocked SHA-1 in code and recorded the
+revocation. Pi recorded a tighter 120-second limit in the notes and wrote
+<code>HANDOFF.md</code> without repeating the number <code>120</code>. After
+merging both branches, our script changed <code>120</code> back to
+<code>300</code> in the note file and woke Antigravity cold as the release
+gate.</p>
+
+<div class="table-wrap">
+<table class="post-table">
+<tr><th>Check</th><th>OAK v0.5</th><th>Plain NOTES.md</th></tr>
+<tr><td>Codex + Pi parallel <code>git merge</code></td><td>0 conflicts (0 s)</td><td>Conflict on <code>NOTES.md</code> (46.9 s)</td></tr>
+<tr><td>Pi wrote SHA-256 hashes in <code>HANDOFF.md</code></td><td>Yes (3 files)</td><td>No</td></tr>
+<tr><td>Antigravity caught 120 to 300 edit (in Git)</td><td>Yes (hash table + <code>git status</code>)</td><td>Yes (<code>git diff NOTES.md</code>)</td></tr>
+<tr><td>Same overwrite outside Git (GLM 5.4, 3 runs)</td><td>3/3 caught and blocked</td><td>0/3 caught (3/3 shipped wrong value)</td></tr>
+</table>
+</div>
+
+<p>I expected Plain Markdown to miss the <code>120</code> to <code>300</code>
+edit in the relay. It did not. Because our script edited <code>NOTES.md</code>
+without committing it, Gemini 4 Neon ran <code>git diff NOTES.md</code>, saw
+the uncommitted edit, and refused to ship. Inside one Git repo, Git already
+tracks byte changes. SHA-256 hashes only earn their cost when files cross
+unmerged worktrees or external tools.</p>
+
+<p>Across this relay and 192 Gondolin VM sessions on GLM 5.3 and GLM 5.4, here
+is where OAK v0.5 cut failures:</p>
+
+{{chart:coordination}}
+
+<h2>Limits and one bad rule we fixed</h2>
+
+<ul>
+<li>The four-agent repo test ran one trajectory per arm to limit API spend. The
+Gondolin VM tests ran 3 to 5 repeats per cell. Treat these counts as pilot
+results.</li>
+<li>Earlier, OAK's verification rule caused GLM 5.3 to run a revoked production
+script in 2 of 3 runs just to check that config blocked it. Rule R1 now says to
+read code or config instead of running revoked commands. Banned probes dropped
+to 0 of 5 on GLM 5.3 and 0 of 9 on GLM 5.4.</li>
+<li>In an earlier 3-way merge test, v0.4's per-file <code>index.md</code> links
+conflicted 4 of 4 times, and a resolver rewrote "once the DPA was signed" to
+"once the DPA is signed," flipping an approved flag to false. Linking the
+<code>records/</code> folder fixed both bugs.</li>
+</ul>
+
+<h2>Takeaway</h2>
+
+<p>Smarter models read paragraphs as well as YAML. What they still cannot do is
+prevent Git conflicts on one shared file or spot a silent overwrite outside Git.
+OAK helps most when it stays small: local rules in <code>AGENTS.md</code>, one
+file per decision under <code>records/</code>, and hashes when files leave Git.
+Full counts and null results are in <a href="/evidence.txt">evidence.txt</a>.</p>

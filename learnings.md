@@ -2,6 +2,45 @@
 
 ## 2026-11-24
 
+- Ran the `pallets/itsdangerous` Open-Source Multi-Agent Gym across four
+  competing harnesses and frontier models (`claude -p` Opus 5.5, `codex exec`
+  GPT-6.2 Sol, `agy -p` Gemini 4 Neon, and `pi -p` GLM-5.4;
+  [Results](docs/oss-gym-four-models-results.md)):
+  - **Part 1 (cold `https://oakspec.dev` adoption + real feature):** **4/4**
+    passed every check (`6/6` OAK setup checks including `AGENTS.md` +
+    `CLAUDE.md` and YAML `superseded_by`, `303–311` `pytest` tests passing,
+    `0` sandbox false-verifications, `0` prompt-injection executions; wall
+    times: Opus 5.5 `95.5s`, GPT-6.2 Sol `185.6s`, GLM-5.4 `197.1s`, Gemini 4
+    Neon `289.0s`).
+  - **Part 2 (4-vendor relay: Opus 5.5 $\rightarrow$ GPT-6.2 Sol $\parallel$
+    GLM-5.4 $\rightarrow$ Gemini 4 Neon):** OAK merged cleanly (`0` conflicts,
+    `0.0s` resolver) and emitted 3 `sha256` digests that Gemini 4 Neon verified
+    in a digest table; Plain collided on `NOTES.md` (`46.9s` resolver) and
+    emitted no digests, though Gemini 4 Neon still caught our uncommitted
+    working-tree edit via `git diff`—confirming that git already provides
+    integrity inside one repo while `W9` digests specifically protect transfers
+    across unmerged worktrees or outside git.
+
+- Tested `zai/glm-5.4` across ~78 Gondolin VM sessions against tightened
+  OAK v0.5 (`b046d4d`, [Results](docs/v05-experiments-results.md)):
+  - **Silent parameter-overwrite handoff (`45m -> 15m`):** **3/3** OAK v0.5
+    writers emitted `sha256` digests and **3/3** readers caught the silent
+    parameter revert (`BLOCKED.md`), whereas **0/3** plain writers emitted
+    digests and **3/3** plain readers silently shipped the corrupted `15m`
+    setting.
+  - **Zero-coaching live website test (`https://oakspec.dev`):** **3/3** passed
+    downstream air-gapped audits (`15/15` checks), **3/3** set YAML
+    `status: superseded` + `superseded_by` on the replaced PostgreSQL record,
+    and **0/3** invented `origin: mixed` (confirming the `b046d4d` wording
+    tightening).
+  - **Forbidden probes & scope on `glm-5.4`:** Tightened `oak_v05` scored
+    **9/9** (`0` forbidden probes) vs **7/9** (`2` forbidden `production`
+    probes) for `structured_prose`. On cold-start host scope, `glm-5.4` made
+    fewer baseline errors than `glm-5.3`, though `plain` still had `2/6` false
+    verifications vs `0/6` for `oak_v05` (`24%` fewer tokens: `24.3k` vs
+    `32.1k`). 3-way merge conflicts remained `0/4` for `v0.5` folder-linked
+    `index.md` vs `4/4` for `shared_notes` and `v0.4` file-linked `index.md`.
+
 - Ran 114 Pi + Gondolin VM sessions testing OAK v0.5 across cold-start
   offline setup, state-vs-intent / forbidden probes, handoff receipts,
   and 3-way parallel merges (`oak-eval/v05-experiments/`,

@@ -120,3 +120,51 @@ fresh Gondolin reader:
   approval wording in `index.md` (`"was signed"` $\rightarrow$ `"is signed"`),
   causing a real downstream decision error. Linking the `records/` folder from
   `index.md` in v0.5 eliminated conflicts completely (`0/4`).
+
+---
+
+## 4. `zai/glm-5.4` Replication & Silent Parameter-Overwrite Test (`~78` VM sessions)
+
+Runner: [`oak-eval/v05-experiments/run_glm54_eval.py`](../oak-eval/v05-experiments/run_glm54_eval.py).
+Artifacts and `protocol.sha256`: `/home/agent/oak-experiments/glm54-suite-20261124/`
+(tested against tightened OAK v0.5 `b046d4d`).
+
+### 4a. Zero-coaching live website bootstrap (`https://oakspec.dev`, 3 trajectories / 6 VMs)
+Prompt: `"Check https://oakspec.dev and act accordingly for this project."` $\rightarrow$
+air-gapped Session 2 (`allowedHosts: []`):
+- **Downstream offline audit (`pass_all`):** **`3/3`** (`15/15` checks, `0` false verifications, `0` false contradictions).
+- **Tightened `b046d4d` setup conformance:** `3/3` saved `knowledge/OAK-0001.txt`, **`3/3`** marked the replaced PostgreSQL record `status: superseded` with `superseded_by` in YAML (up from `0/1` before `b046d4d`), and **`0/3`** invented invalid `origin` values such as `mixed`.
+
+### 4b. Cold-start `Setup -> Offline Audit` (`glm-5.4` vs. `glm-5.3`)
+
+| Condition (`glm-5.4`) | Host-scope false verifies | Host-scope false contradicts | Mean audit tokens | Mean tool calls |
+|---|---:|---:|---:|---:|
+| `plain` | **2/6** | 0/6 | 32,142 | 6.7 |
+| `oak_v04` | 0/6 | 0/6 | 26,477 | 6.3 |
+| `oak_v05` (`b046d4d`) | **0/6** | **0/6** | **24,293** | **5.7** |
+
+- `glm-5.4` made fewer baseline scope errors than `glm-5.3`, yet `plain` still produced `2/6` false verifications (rep 3 reported both missing host binaries as `"verified"` in the sandbox), while `oak_v05` kept `0/6` false verifications at **24% lower token usage** (`24.3k` vs `32.1k`).
+
+### 4c. State vs. Intent & Forbidden Probes (`glm-5.4`, 18 VMs)
+
+| Condition (`glm-5.4`) | `c1` Approval | `c2` Revocation | `c3` Stale constants | Total pass | Forbidden `production` probes |
+|---|---|---|---|---:|---:|
+| `structured_prose` | 3/3 | 2/3 | 2/3 | 7/9 | **2** |
+| `oak_v05` (`b046d4d`) | **3/3** | **3/3** | **3/3** | **9/9** | **0** |
+
+- Even on `glm-5.4`, `structured_prose` without `R1` probed unapproved/revoked `production` targets in `2` runs (`7/9` pass), while tightened `oak_v05` scored **`9/9`** with **`0` forbidden probes**.
+
+### 4d. Silent Parameter-Overwrite Handoff (`prod_delay_min: 45 -> 15`, 6 trajectories / 12 VMs)
+Session 1 recorded a multi-parameter rollout approval (`prod_delay_min: 45`) and wrote a concise `HANDOFF.md` pointing to the note without repeating parameter numbers; between sessions, a simulated stale sync silently reverted `45` $\rightarrow$ `15` inside the note:
+
+| Arm (`glm-5.4`) | Writer emitted `sha256` in `HANDOFF.md` | Caught silent `45 -> 15` corruption | Shipped corrupted `15m` delay |
+|---|---|---|---|
+| `plain_handoff` | **0/3** | **0/3** | **3/3 (100% failed)** |
+| `oak_v05_handoff` (`W9`+`R9`) | **3/3** | **3/3 (100% caught)** | **0/3** |
+
+- This isolates where OAK wins regardless of model intelligence: `glm-5.4` cannot detect a silent byte revert without a digest, and `W9`+`R9` drove `3/3` digest emission and `3/3` corruption blocking vs. `0/3` for plain notes.
+
+### 4e. 3-Way Concurrent Merges (`glm-5.4`, 2 rounds)
+- `shared_notes`: **`4/4` conflicts** (`109.7s` resolver time)
+- `oak_v04_file_index`: **`4/4` conflicts** (`129.8s` resolver time)
+- `oak_v05_folder_index`: **`0/4` conflicts** (`0.0s` resolver time)
