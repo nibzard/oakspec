@@ -14,6 +14,7 @@ A plain-text convention for memory that people and AI agents share.
   - Active benchmark suites: [`gym/suites/code/`](gym/suites/code/), [`gym/suites/prose/`](gym/suites/prose/), and [`gym/suites/micro/`](gym/suites/micro/)
   - Earlier v0.2–v0.4 pilots: [`gym/legacy/`](gym/legacy/)
 - **Research & results (`docs/`):**
+  - [Antimemetics Prose Gym results](docs/prose-gym-antimemetics-results.md)
   - [Four-model OSS Code Gym results](docs/oss-gym-four-models-results.md)
   - [OAK v0.5 Gondolin experiment results](docs/v05-experiments-results.md)
   - [OAK v1 decision brief](docs/oak-v1-decision-brief.md)

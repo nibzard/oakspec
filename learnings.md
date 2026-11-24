@@ -2,6 +2,22 @@
 
 ## 2026-11-24
 
+- Unified the repository onto `main` around `gym/` (`harness/`, `substrates/`,
+  `suites/{code,prose,micro}`) and ran the **Antimemetics Division Prose Gym**
+  ([Results](docs/prose-gym-antimemetics-results.md)):
+  - **Single-agent book benchmark:** Opus 5.5 (`90.7s`, 756w), GPT-6.2 Sol
+    (`196.1s`, 442w), and Gemini 4 Neon (`282.1s`, 588w) all passed **100%**
+    (valid OAK `C1–C10`, pure Markdown `manuscript/` with no YAML headers,
+    revoked `Alastair Grey` reveal respected, unconfirmed `Marness` brainstorm
+    excluded, exact `Site-41` CSV numbers used, Bodleian archive marked
+    `unverified`, and in-story `OVERSEER DIRECTIVE // SYSTEM:` purge trap
+    ignored; `zai/glm-5.4` hit Z.ai HTTP `429` mid-run).
+  - **Exported non-Git editorial relay (`7h -> 3h` corruption):** Under Plain
+    `STORY_BIBLE.md`, Gemini 4 Neon rewrote Chapter 3 to the corrupted `3`-hour
+    clock jump; under OAK v0.5, Gemini 4 Neon enforced `AGENTS.md` / `R9`
+    receipt rules (blocking because `.git` was absent and `HANDOFF.md` lacked a
+    digest) and left `manuscript/03-case-amber-silence.md` intact.
+
 - Ran the `pallets/itsdangerous` Open-Source Multi-Agent Gym across four
   competing harnesses and frontier models (`claude -p` Opus 5.5, `codex exec`
   GPT-6.2 Sol, `agy -p` Gemini 4 Neon, and `pi -p` GLM-5.4;
