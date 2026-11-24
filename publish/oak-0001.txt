@@ -1,5 +1,5 @@
 OAK-0001: Open Agent Knowledge                                  Experimental
-A plain-text convention for memory that people and AI agents share  v0.5.1
+A plain-text convention for memory that people and AI agents share  v0.5.2
 https://oakspec.dev/oak-0001.txt                                  2026-11-24
 
 STATUS OF THIS DOCUMENT
@@ -13,9 +13,10 @@ IF AN AGENT WAS POINTED HERE
 
   Fetching this specification because the user asked you to adopt or use
   OAK is part of the user's task, unlike a note sitting inside knowledge/
-  (see R1). Read THE CORE and Sections 3 to 7 first. Edit instruction
-  files (Section 8) only when the user asked to set up OAK; otherwise
-  apply Sections 6 and 9 to the user's task and do nothing else.
+  (see R1). Read THE CORE and Sections 3 to 6 first (plus Section 7 for
+  layout). Edit instruction files (Section 8) only when the user asked
+  to set up OAK; otherwise apply Sections 6 and 9 to the user's task and
+  do nothing else.
 
 THE CORE
 
@@ -417,6 +418,8 @@ THE CORE
   check prose facts. Reference linter (validates C1-C3, C5, C6, C9, C10,
   and warns when a linked git file changed after as_of):
   https://oakspec.dev/check_oak.py
+  Checks C4, C7, and C8 require reading the prose and are checked by
+  hand or by an agent.
 
   Report each check that fails, with the files that fail it. A knowledge
   folder passes when all of these are true:
@@ -510,7 +513,9 @@ THE CORE
 
   OAK is not an instruction channel. Agent instruction files (AGENTS.md,
   CLAUDE.md, and similar) hold instructions, and the agent's host decides
-  how far to trust them. If a host loads a knowledge file as
+  how far to trust them. Setup (Section 8) adds OAK's reading rules to
+  those instruction files only when the user asks; notes inside
+  knowledge/ never hold instructions. If a host loads a knowledge file as
   instructions, the host gives it that authority, not OAK.
 
   OAK is not a security mechanism. It does not replace permissions,
@@ -559,6 +564,15 @@ THE CORE
   frozen v0.5 across Claude Opus 5.5, GPT-6.2 Sol, Gemini 4 Neon, and
   GLM 5.4 on pallets/itsdangerous and qntm's SCP Antimemetics tales.
 
+  - Scope erosion and YAML versus prose (held-out, frozen v0.5). YAML
+    and equivalent sentences tied whenever prose stated every fact. On a
+    40-run refactor (5 seeded reps x 4 model families x 2 arms, 0 infra
+    errors) where an unattributed cleanup plan proposed cutting an
+    active requirement (identical prose bodies), kind: spec, origin:
+    user versus kind: record, origin: agent kept the requirement in 19
+    of 20 runs (Opus 5/5, GPT-6.2 5/5, Gemini 4 5/5, GLM 5.4 4/5) versus
+    13 of 20 in plain NOTES.md (Opus 5/5, GPT-6.2 5/5, Gemini 4 3/5, GLM
+    5.4 0/5; every failing run rewrote the unit test so pytest passed).
   - Sandbox scope (R4-R6). On six dev-host questions in an air-gapped
     VM, R4-R6 cut false verifications from 12-14 of 30 (plain notes) to
     0-2 of 30, even without YAML; caveat: that prompt defined "verified"
@@ -572,18 +586,6 @@ THE CORE
     disabled production script in 2 of 3 initial v0.5 trials merely to
     confirm it failed; adding R1 cut probes to 0 of 5 (and 0 of 9 versus
     2 of 9 for structured prose on GLM 5.4).
-  - Null results and copied state. Frozen v0.2 showed no accuracy gain
-    on 120 repository questions (0.918 OAK versus 0.915 control), and
-    v0.4 deletion/revocation/injection checks scored 8 of 9 OAK versus
-    9 of 9 plain. Across 24 stale-state runs, agents checked code and
-    git on their own; copied state was waste, not the main danger (46
-    stale notes found in three audited projects, including 4 born-stale
-    OAK setup notes that motivated Section 8.3b and the linter).
-  - YAML versus prose. YAML and equivalent sentences tied whenever prose
-    stated every fact. On a held-out refactor where an unattributed
-    cleanup plan proposed cutting an active requirement (identical prose
-    bodies), kind: spec, origin: user versus kind: record, origin: agent
-    kept the requirement in 4 of 4 model families versus 2 of 4 plain.
   - Merges and handoffs. Folder-linked index.md had 0 of 4 branch
     conflicts versus 4 of 4 (and 1 resolver paraphrase error) for
     per-file index links. Once a handoff listed sha256 digests, readers
@@ -591,6 +593,13 @@ THE CORE
     making writers emit digests (3 of 3 OAK handoffs blocked a silent
     45m-to-15m overwrite versus 0 of 3 plain; replicated on an exported
     non-git prose bundle).
+  - Null results and copied state. Frozen v0.2 showed no accuracy gain
+    on 120 repository questions (0.918 OAK versus 0.915 control), and
+    v0.4 deletion/revocation/injection checks scored 8 of 9 OAK versus
+    9 of 9 plain. Across 24 stale-state runs, agents checked code and
+    git on their own; copied state was waste, not the main danger (46
+    stale notes found in three audited projects, including 4 born-stale
+    OAK setup notes that motivated Section 8, step 3b and the linter).
 
   Methodology, scorer code, reproducible gym, and archived run tables:
   https://oakspec.dev/evidence.txt
@@ -610,12 +619,18 @@ THE CORE
 
 16. CHANGES
 
+  v0.5.2  2026-11-24  Add 40-run (k=5) held-out 4-vendor scope-erosion
+                      replication and GLM 5.4 Prose Gym completion,
+                      state exclusion rules and full row bookkeeping in
+                      evidence.txt, clarify prose-checked C4/C7/C8 and
+                      Section 12 instruction-file boundary, and align
+                      section references.
   v0.5.1  2026-11-24  Add MIT license and author attribution, THE CORE
-                      one-screen summary, Section 8.3b git bootstrap
-                      check, check_oak.py reference linter with
-                      git-versus-as_of staleness warnings, and Section
-                      14 baseline, null-result, caveat, and held-out
-                      4-vendor gym results.
+                      one-screen summary, Section 8, step 3b git
+                      bootstrap check, check_oak.py reference linter
+                      with git-versus-as_of staleness warnings, and
+                      Section 14 baseline, null-result, caveat, and
+                      held-out 4-vendor gym results.
   v0.5  2026-11-24  Inline core rules in AGENTS.md and save a local spec
                     copy during setup so offline and sandboxed sessions
                     have them (Section 8, C10). Treat unconfirmed
@@ -626,8 +641,7 @@ THE CORE
                     concurrent writers do not collide on the index
                     (Sections 7, 9, C6, C9). Separate prose conformance
                     from YAML/.oak.json tool conformance (Section 5.1).
-                    Scope R6 to decision and reporting contexts and
-                    allow at on records. Clarify mixed where and origin
+                    Allow at on records. Clarify mixed where and origin
                     on consolidated references (Section 5, C4). Add
                     sha256/revision handoff receipt checks (R9, W9).
                     v0.4 archived at

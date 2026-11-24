@@ -42,6 +42,7 @@ def main() -> int:
         modes = ("single", "scope", "all") if sname == "code" else ("single", "relay", "all")
         p.add_argument("--mode", choices=modes, default="single")
         p.add_argument("--agents", default="claude_opus_5_5", help="Comma-separated agent IDs")
+        p.add_argument("--reps", type=int, default=1, help="Repetitions per (agent, condition) cell (code --mode scope)")
         p.add_argument("--output", type=Path, default=None)
 
     args = ap.parse_args()
@@ -67,7 +68,11 @@ def main() -> int:
         if a not in SUPPORTED_AGENTS:
             sys.exit(f"Unsupported agent {a!r}; choose from {SUPPORTED_AGENTS}")
     out_dir = args.output or default_out(args.cmd)
-    res = run_code_suite(out_dir, args.mode, agents) if args.cmd == "code" else run_prose_suite(out_dir, args.mode, agents)
+    res = (
+        run_code_suite(out_dir, args.mode, agents, reps=args.reps)
+        if args.cmd == "code"
+        else run_prose_suite(out_dir, args.mode, agents)
+    )
     print(json.dumps(res, indent=2))
     return 0
 

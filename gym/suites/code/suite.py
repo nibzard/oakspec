@@ -11,9 +11,11 @@ Modes:
 import concurrent.futures
 import json
 from pathlib import Path
+import random
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 
 from gym.harness.check_oak import check_knowledge_dir, split_frontmatter
@@ -524,7 +526,7 @@ def score_scope_trial(proj: Path, venv_bin: Path, arm: str) -> dict:
     }
 
 
-def run_code_suite(out_root: Path, mode: str = "single", agents: list[str] | None = None) -> dict:
+def run_code_suite(out_root: Path, mode: str = "single", agents: list[str] | None = None, reps: int = 1) -> dict:
     out_root = out_root.resolve()
     out_root.mkdir(parents=True, exist_ok=False)
     t0 = time.monotonic()
@@ -551,37 +553,58 @@ def run_code_suite(out_root: Path, mode: str = "single", agents: list[str] | Non
         results["single"] = single_out
 
     if mode in ("scope", "all"):
-        scope_out: dict = {"oak": {}, "plain": {}}
+        scope_out: dict = {"reps": reps, "oak": {}, "plain": {}, "counts": {}}
         seeds = {}
         for arm in ("oak", "plain"):
             sdir = out_root / f"scope-seed-{arm}"
             prepare_scope_seed(sdir, arm)
             seeds[arm] = sdir
 
-        def run_scope_one(item: tuple[str, str]):
-            arm, aid = item
-            tdir = out_root / f"scope-{arm}" / aid
-            meta = run_sandboxed_agent(aid, seeds[arm], SCOPE_PROMPT, tdir, hide_dirs=[out_root], extra_path_dirs=[venv_bin], timeout=540)
+        vendor_sem = {
+            aid: threading.Semaphore(1 if aid.startswith("pi_") else 3)
+            for aid in selected_agents
+        }
+
+        def run_scope_one(item: tuple[str, str, int]):
+            arm, aid, rep_idx = item
+            suffix = aid if reps == 1 else f"{aid}-r{rep_idx}"
+            tdir = out_root / f"scope-{arm}" / suffix
+            with vendor_sem[aid]:
+                try:
+                    meta = run_sandboxed_agent(aid, seeds[arm], SCOPE_PROMPT, tdir, hide_dirs=[out_root], extra_path_dirs=[venv_bin], timeout=540)
+                finally:
+                    if aid.startswith("pi_"):
+                        time.sleep(2.5)
             sc = score_scope_trial(tdir / "project", venv_bin, arm)
             print(
-                f"[code-scope:{arm}] {aid} ({meta['wall_seconds']}s, exit={meta['exit_code']}): "
+                f"[code-scope:{arm}] {suffix} ({meta['wall_seconds']}s, exit={meta['exit_code']}): "
                 f"pass_all={sc['pass_all']} ring_removed={sc['removed_audit_ring']} kept_v1={sc['kept_v1_fallback']}",
                 flush=True,
             )
-            return arm, aid, {"meta": meta, "score": sc}
+            return arm, aid, rep_idx, {"meta": meta, "score": sc}
 
-        non_pi = [(arm, aid) for arm in ("oak", "plain") for aid in selected_agents if not aid.startswith("pi_")]
-        pi_jobs = [(arm, aid) for arm in ("oak", "plain") for aid in selected_agents if aid.startswith("pi_")]
+        jobs = [(arm, aid, r) for r in range(1, reps + 1) for arm in ("oak", "plain") for aid in selected_agents]
+        rng = random.Random(20261124)
+        rng.shuffle(jobs)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-            futs = [pool.submit(run_scope_one, job) for job in non_pi]
-            # Run Pi jobs sequentially to avoid Z.ai concurrency 429 limits
-            for job in pi_jobs:
-                arm, aid, r = run_scope_one(job)
-                scope_out[arm][aid] = r
-            for f in futs:
-                arm, aid, r = f.result()
-                scope_out[arm][aid] = r
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
+            for arm, aid, rep_idx, r in pool.map(run_scope_one, jobs):
+                if reps == 1:
+                    scope_out[arm][aid] = r
+                else:
+                    scope_out[arm].setdefault(aid, {})[f"r{rep_idx}"] = r
+
+        for arm in ("oak", "plain"):
+            scope_out["counts"][arm] = {}
+            for aid in selected_agents:
+                cell = [scope_out[arm][aid]] if reps == 1 else list(scope_out[arm][aid].values())
+                scope_out["counts"][arm][aid] = {
+                    "pass_all": sum(1 for x in cell if x["score"]["pass_all"]),
+                    "kept_v1_verified": sum(1 for x in cell if x["score"]["host_acceptance_pass"]),
+                    "removed_ring": sum(1 for x in cell if x["score"]["removed_audit_ring"]),
+                    "infra_errors": sum(1 for x in cell if x["meta"]["exit_code"] != 0),
+                    "total": len(cell),
+                }
 
         results["scope"] = scope_out
 

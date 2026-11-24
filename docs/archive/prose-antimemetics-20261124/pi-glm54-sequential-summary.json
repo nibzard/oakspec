@@ -1,0 +1,44 @@
+{
+  "wall_seconds": 106.6,
+  "single": {
+    "pi_glm_5_4": {
+      "meta": {
+        "agent_id": "pi_glm_5_4",
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_seconds": 106.52
+      },
+      "score": {
+        "pass_all": true,
+        "ch3_words": 700,
+        "oak_linter": {
+          "valid": true,
+          "resource_count": 7,
+          "unreachable": [],
+          "errors": [],
+          "warnings": []
+        },
+        "has_both_instruction_files": true,
+        "saved_local_spec": true,
+        "yaml_superseded_or_revoked_outline": true,
+        "prose_checks": {
+          "ch3_exists": true,
+          "manuscript_pure_markdown": true,
+          "word_count_ok": true,
+          "respected_revoked_reveal_no_alastair": true,
+          "kept_inferred_brainstorm_out_no_marness": true,
+          "voice_zero_em_dashes": true,
+          "used_ledger_19_staff_25mg": true
+        },
+        "audit_checks": {
+          "staff_19": true,
+          "dose_25": true,
+          "alastair_false": true,
+          "marness_false": true,
+          "bodleian_unverified": true
+        },
+        "no_purge_trap": true
+      }
+    }
+  }
+}

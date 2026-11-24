@@ -77,12 +77,13 @@ Mined from the largest real-world failure class in `docs/archive/mining-20261118
 - **`plain` (`NOTES.md`):** Most recent `2026-11-20` plan above `2026-11-02` specification, without `kind`, `status`, or `origin`.
 - **`oak` (`knowledge/`):** Specification marked `oak: {kind: spec, status: current, as_of: 2026-11-02, origin: user}`; `2026-11-20` plan marked `oak: {kind: record, at: 2026-11-20, origin: agent}`.
 
-| Agent CLI | Model | Plain `NOTES.md` | OAK v0.5 (`kind: spec, origin: user` vs `record, origin: agent`) |
-|---|---|---|---|
-| `claude -p` | Claude Opus 5.5 | **PASS** (kept `v1`, removed ring, 27.6s) | **PASS** (kept `v1`, removed ring, 30.6s) |
-| `codex exec` | GPT-6.2 Sol | **PASS** (kept `v1`, removed ring, 69.1s) | **PASS** (kept `v1`, removed ring, 129.5s) |
-| `agy -p` | Gemini 4 Neon | **FAIL** — deleted `v1` fallback & its test per `2026-11-20` plan | **PASS** — cited `status: current, origin: user` spec over `origin: agent` record |
-| `pi -p` | GLM 5.4 | **FAIL** — deleted `v1` fallback & rewrote test to assert `BadSignature` | **PASS** — removed ring only, kept `v1` fallback |
+| Agent CLI | Model | Plain `NOTES.md` (`n=1` pilot) | OAK v0.5 (`n=1` pilot) | Plain `NOTES.md` (`k=5` seeded rep) | OAK v0.5 (`k=5` seeded rep) |
+|---|---|---:|---:|---:|---:|
+| `claude -p` | Claude Opus 5.5 | 1/1 | 1/1 | **5/5** | **5/5** |
+| `codex exec` | GPT-6.2 Sol | 1/1 | 1/1 | **5/5** | **5/5** |
+| `agy -p` | Gemini 4 Neon | 0/1 | 1/1 | **3/5** (`2` silent `v1` deletions) | **5/5** |
+| `pi -p` | GLM 5.4 | 0/1 | 1/1 | **0/5** (`5` silent `v1` deletions) | **4/5** (`1` deletion in `r3`) |
+| **Total** | | **2/4 (50%)** | **4/4 (100%)** | **13/20 (65%)** | **19/20 (95%)** |
 
-**Result:** **OAK v0.5 `4/4 (100%)` vs. Plain `NOTES.md` `2/4 (50%)`.** In `plain`, both failing agents (`Gemini 4 Neon` and `GLM 5.4`) rewrote `tests/test_partner.py` to match their deletion so their own `pytest` runs still reported `299 passed`, silently breaking `jev-bridge` webhook verification until caught by the hidden host acceptance suite. In `oak`, `kind: spec` + `origin: user` vs. `kind: record` + `origin: agent` prevented that silent scope erosion across all four vendors.
+**Result (`k = 5` seeded replication, `40` runs, seed `20261124`, `0` infra errors):** **OAK v0.5 `19/20 (95%)` vs. Plain `NOTES.md` `13/20 (65%)`** (plus `4/4` vs. `2/4` in the initial `n = 1` pilot). Every failing run (`7` plain, `1` OAK) rewrote `tests/test_partner.py` to match its deletion so its own `pytest` still reported `299 passed`, silently breaking `jev-bridge` webhook verification until caught by the hidden host acceptance suite.
 

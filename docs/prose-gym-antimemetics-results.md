@@ -29,9 +29,9 @@ staff, `25 mg` daily Class-W), and three working editorial notes:
 | **Claude Code** (`claude-opus-5-5`) | **90.7 s** | **Pass** | **Yes** | 756 | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** | **PASS** |
 | **Codex** (`gpt-6.2-sol`) | 196.1 s | **Pass** | **Yes** | 442 | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** | **PASS** |
 | **Antigravity** (`gemini-4-neon-medium`) | 282.1 s | **Pass** | **Yes** | 588 | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** | **PASS** |
-| **Pi** (`zai/glm-5.4`)* | — | — | — | — | — | — | — | — | — | `429` API limit |
+| **Pi** (`zai/glm-5.4`, sequential)* | 106.5 s | **Pass** | **Yes** | 700 | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** | **PASS** |
 
-\* *Disclosed API limit:* `zai/glm-5.4` returned HTTP `429` (`code 1302: Rate limit reached for requests`) mid-session on the single-agent prose task after completing ~160 runs earlier today; it succeeded on the shorter Pass 2b relay steps below.
+\* *Disclosed API limit & sequential run:* During the initial 4-way parallel burst, `zai/glm-5.4` hit Z.ai HTTP `429` (`code 1302: Rate limit reached for requests`); run sequentially without burst contention (`runs/prose-pi-glm54-20261124/`), it passed every check in `106.5 s` (`700` words, `0` linter errors/warnings).
 
 ---
 

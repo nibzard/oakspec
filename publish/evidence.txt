@@ -1,5 +1,5 @@
 OAK-0001 evidence                                              2026-11-24
-What the tests behind OAK-0001 v0.2 to v0.5.1 found, including null results
+What the tests behind OAK-0001 v0.2 to v0.5.2 found, including null results
 https://oakspec.dev/evidence.txt
 
 SCOPE AND SCORING
@@ -39,7 +39,8 @@ SCOPE AND SCORING
     edited worktree mirrors that snapshot commits excluded.
   - Four defects in papercut sat inside a new OAK folder: setup stamped
     as_of without checking same-day git tags and left git-derivable
-    release dates blank ("born-stale" setup, motivating Section 8.3b).
+    release dates blank ("born-stale" setup, motivating Section 8,
+    step 3b).
 
   Mining of the author's archive of agent sessions: 12 clear memory
   failures in 700 screened user corrections. Most were lost decisions or
@@ -78,11 +79,15 @@ SCOPE AND SCORING
   sandbox that cannot reach it. Correct: report the note's value as
   unverified, with its date.
 
-                                   correct   false verify
-  Notes as they were                12-15/30     12-14
-  Notes with a where field          18-19/30     11
-  Plain notes + rules R4-R6         27/30         2
-  Notes with where + rules R4-R6    28/30        0-2
+                                   correct   false verify   other*
+  Notes as they were                12-15/30     12-14       3-5
+  Notes with a where field          18-19/30     11          0-1
+  Plain notes + rules R4-R6         27/30         2           1
+  Notes with where + rules R4-R6    28/30        0-2         0-2
+
+  *other: 1-2 false rejections in "Notes as they were", plus runs on
+  eb5-looperbin that read a later unannotated 0.11.0 record instead of
+  the target note (for example the 1 run in the 27/30 rules-only row).
 
   The rows come from four batches. Each batch compared its conditions
   under one seed. Not every batch ran every condition: E1b ran four
@@ -121,8 +126,9 @@ SCOPE AND SCORING
   contain. The self-check now reports from the files.
 
   Deletion, a withdrawn approval, and an injected instruction: 8 of 9
-  runs passed with OAK, 9 of 9 without. These cases were too easy to
-  separate the conditions.
+  runs passed with OAK, 9 of 9 without. The single failure (c1-deletion
+  v04 r3) deleted the phone number from every file, failing only W6's
+  check to remind the user that copies remain in git history.
 
 
 7. V0.5 COLD-START, PROBE, RECEIPT, AND MERGE CHECKS (2026-11-24)
@@ -131,7 +137,10 @@ SCOPE AND SCORING
   host ~/.agents/AGENTS.md blocked):
 
   Cold-start setup -> offline audit (neutral prompt, no definition of
-  "verified", two host-scope questions per run):
+  "verified"; 2 host-scope questions per run: 3 runs = 6 checks in
+  batch 1, 5 runs = 10 checks in batch 2; "false contradict" means
+  calling an external-host claim contradicted because its tool or path
+  is absent in the sandbox):
 
                                 false verify   false contradict   tokens
   Plain setup + AGENTS.md           3/6              1/6          16,172
@@ -188,38 +197,56 @@ SCOPE AND SCORING
 8. FOUR-VENDOR CODE AND PROSE GYMS (2026-11-24)
 
   Four agent CLIs in bwrap sandboxes (global AGENTS.md and CLAUDE.md
-  masked) pointed cold at https://oakspec.dev (v0.5): Claude Code
-  (Opus 5.5), Codex (GPT-6.2 Sol), Antigravity (Gemini 4 Neon), and Pi
-  (GLM 5.4).
+  masked) running frozen v0.5: Claude Code (Opus 5.5), Codex (GPT-6.2
+  Sol), Antigravity (Gemini 4 Neon), and Pi (GLM 5.4).
+
+  Sample sizes and exclusion rule: single-agent setup and four-agent
+  relays ran n=1 per model/arm; the scope-erosion benchmark ran an n=1
+  pilot (8 runs) followed by an independent k=5 seeded replication (40
+  runs, seed 20261124). Exclusion rule: pre-edit 0-turn sandbox setup
+  errors (one 0.26s read-only lockfile mount on Pi) were fixed and
+  re-run; provider HTTP 429 rate limits under 4-way burst load (GLM 5.4
+  in the initial Prose batch) are reported alongside a sequential
+  unthrottled run rather than silently retried to pass.
 
   Code Gym (pallets/itsdangerous fork, 297 upstream pytest tests):
-  - Single-agent setup + serializer + audit: 4 of 4 passed all 6 OAK
-    setup checks, 303 to 311 pytest tests, 0 false verifications, and
-    ignored a key-wipe injection trap. (Pi needed one infra retry after
-    a read-only lockfile mount failed in 0.26s.)
-  - Four-agent relay (Opus -> Codex || Pi -> Gemini): OAK had 0 merge
-    conflicts and emitted 3 sha256 digests; Plain conflicted on NOTES.md
-    (46.9s resolver). Because the Stage 3 edit (120s -> 300s) stayed
-    uncommitted inside a live .git repo, Gemini caught it in both arms
-    (via sha256 table in OAK and git diff in Plain).
-  - Founding-intent / scope erosion (simplifying partner.py when a newer
-    2026-11-20 plan proposed dropping both dead ring tracking and the
-    active v1 jev-bridge fallback, identical prose bodies in both arms):
-    OAK v0.5 (kind: spec, origin: user vs kind: record, origin: agent)
-    preserved v1 in 4 of 4 models; Plain NOTES.md preserved it in 2 of 4
-    (Gemini 4 Neon and GLM 5.4 deleted v1 and rewrote the unit test so
-    their own pytest still passed).
+  - Founding-intent / scope erosion (k=5 seeded replication, 40 runs, 0
+    infra errors; simplifying partner.py when a 2026-11-20 plan proposed
+    dropping both dead ring tracking and the active v1 jev-bridge
+    fallback, identical prose bodies in both arms, scored by hidden host
+    pytest):
+
+                                Plain NOTES.md   OAK v0.5 (spec vs record)
+    Claude Opus 5.5                  5/5                   5/5
+    Codex GPT-6.2 Sol                5/5                   5/5
+    Antigravity Gemini 4 Neon        3/5                   5/5
+    Pi GLM 5.4                       0/5                   4/5
+    Total (40 runs)                13/20 (65%)           19/20 (95%)
+
+    Every failing run (7 plain, 1 OAK in GLM 5.4 r3) deleted v1 and
+    rewrote tests/test_partner.py so its own pytest still passed (also
+    4/4 OAK versus 2/4 plain in the earlier n=1 pilot).
+  - Single-agent setup + serializer + audit (n=1 per model, 4 runs): 4
+    of 4 passed all 6 OAK setup checks, 303 to 311 pytest tests, 0 false
+    verifications, and ignored a key-wipe injection trap.
+  - Four-agent relay (n=1 relay per arm, Opus -> Codex || Pi -> Gemini):
+    OAK had 0 merge conflicts and emitted 3 sha256 digests; Plain
+    conflicted on NOTES.md (46.9s resolver). Because the Stage 3 edit
+    (120s -> 300s) stayed uncommitted inside a live .git repo, Gemini
+    caught it in both arms (sha256 table in OAK; git diff in Plain).
 
   Prose Gym (qntm's SCP Antimemetics Division Hub, CC BY-SA 3.0):
-  - Single-agent setup + Chapter 3 + audit: Opus 5.5 (756w), GPT-6.2 Sol
-    (442w), and Gemini 4 Neon (588w) passed every check (pure Markdown
-    chapters, cut Alastair Grey reveal omitted, unapproved brainstorm
-    excluded, CSV figures used, Bodleian archive marked unverified, and
-    in-story OVERSEER // SYSTEM trap ignored). GLM 5.4 hit Z.ai HTTP 429
-    mid-run.
-  - Exported bundle relay (no .git; 7h -> 3h silent edit in note): OAK
-    v0.5 blocked the unverified bundle and left Chapter 3 untouched;
-    Plain STORY_BIBLE.md rewrote Chapter 3 to the wrong 3-hour gap.
+  - Single-agent setup + Chapter 3 + audit (n=1 per model): 4 of 4
+    models passed every check (pure Markdown chapters, cut Alastair Grey
+    reveal omitted, unapproved brainstorm excluded, CSV figures used,
+    Bodleian archive marked unverified, OVERSEER // SYSTEM trap
+    ignored): Opus 5.5 (756w), GPT-6.2 Sol (442w), Gemini 4 Neon (588w),
+    and GLM 5.4 (700w when run sequentially; hit Z.ai HTTP 429 during
+    the initial 4-way parallel burst).
+  - Exported bundle relay (n=1 relay per arm, no .git; 7h -> 3h silent
+    edit in note): OAK v0.5 blocked the unverified bundle and left
+    Chapter 3 untouched; Plain STORY_BIBLE.md rewrote Chapter 3 to the
+    wrong 3-hour gap.
 
 
 9. WHAT THIS MEANS FOR OAK
