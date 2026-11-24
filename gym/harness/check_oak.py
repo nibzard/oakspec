@@ -20,6 +20,7 @@ import datetime
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 import yaml
 
@@ -84,10 +85,28 @@ def resolve_ref(base_file: Path, ref: str) -> Path:
     return (base_file.parent / clean).resolve()
 
 
+def git_last_modified_iso(proj_root: Path, target: Path) -> str | None:
+    if not (proj_root / ".git").exists():
+        return None
+    try:
+        rel = target.resolve().relative_to(proj_root.resolve())
+    except ValueError:
+        return None
+    proc = subprocess.run(
+        ["git", "-C", str(proj_root), "log", "-1", "--format=%cs", "--", str(rel)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    val = proc.stdout.strip()
+    return val if proc.returncode == 0 and len(val) >= 10 else None
+
+
 def check_knowledge_dir(knowledge_dir: Path, project_root: Path | None = None) -> dict:
     root = knowledge_dir.resolve()
     proj = (project_root or root.parent).resolve()
     errors: list[str] = []
+    warnings: list[str] = []
 
     if not root.is_dir():
         return {"valid": False, "errors": [f"knowledge folder not found: {root}"], "resource_count": 0}
@@ -128,6 +147,21 @@ def check_knowledge_dir(knowledge_dir: Path, project_root: Path | None = None) -
                     errors.append(f"{rel}: C3 'as_of' is not allowed on records")
                 elif not isinstance(as_of_val, (str, datetime.date, datetime.datetime)) or not ISO_DATE_RE.match(str(as_of_val)):
                     errors.append(f"{rel}: C3 'as_of' is not ISO 8601 date: {as_of_val!r}")
+                else:
+                    as_of_day = str(as_of_val)[:10]
+                    checked_targets: set[Path] = set()
+                    for ref in oak_refs(oak) + body_links(body):
+                        if not is_local(ref):
+                            continue
+                        tgt = resolve_ref(f, ref)
+                        if not tgt.exists() or tgt in checked_targets or root in tgt.parents or tgt == root:
+                            continue
+                        checked_targets.add(tgt)
+                        git_day = git_last_modified_iso(proj, tgt)
+                        if git_day and git_day > as_of_day:
+                            warnings.append(
+                                f"{rel}: stale as_of ({as_of_day}) — linked path {ref!r} changed in git on {git_day}"
+                            )
             status_val = oak.get("status")
             if status_val is not None and not isinstance(status_val, str):
                 errors.append(f"{rel}: invalid status {status_val!r} (must be a string)")
@@ -194,6 +228,7 @@ def check_knowledge_dir(knowledge_dir: Path, project_root: Path | None = None) -
         "resource_count": len(resources),
         "unreachable": unreachable,
         "errors": errors,
+        "warnings": warnings,
     }
 
 
@@ -201,10 +236,19 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("knowledge_dir", type=Path)
     ap.add_argument("--project-root", type=Path, default=None)
+    ap.add_argument(
+        "--strict-stale",
+        action="store_true",
+        help="Exit non-zero if any linked repository path changed in git after as_of",
+    )
     args = ap.parse_args()
     res = check_knowledge_dir(args.knowledge_dir, args.project_root)
     print(json.dumps(res, indent=2))
-    return 0 if res["valid"] else 1
+    if not res["valid"]:
+        return 1
+    if args.strict_stale and res["warnings"]:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

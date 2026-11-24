@@ -114,19 +114,21 @@ footer {{ font-size: .8rem; color: #555; }}
 {body}
 </main>
 <hr>
-<footer>End of OAK-0001. <a href="/oak-0001.txt">Plain text</a> · <a href="/evidence.txt">Evidence</a> · <a href="/blog/">Blog</a>.</footer>
+<footer>End of OAK-0001 · By <a href="https://github.com/nibzard">nibzard</a> (MIT) · <a href="/oak-0001.txt">Plain text</a> · <a href="/evidence.txt">Evidence</a> · <a href="/check_oak.py">Linter</a> · <a href="/blog/">Blog</a> · <a href="https://github.com/nibzard/oakspec">GitHub</a>.</footer>
 </body>
 </html>
 """
 
 LLMS = """# OAK-0001: Open Agent Knowledge
 
-> A plain-text convention for memory that people and AI agents share.
+> A plain-text convention for memory that people and AI agents share (MIT License, by nibzard).
 
 To set up OAK memory, read the spec and follow Section 8 (Set up):
 
 - [OAK-0001 (plain text)]({url}/oak-0001.txt)
+- [Reference linter (Python)]({url}/check_oak.py)
 - [Evidence behind the spec]({url}/evidence.txt)
+- [GitHub repository & gym](https://github.com/nibzard/oakspec)
 - [Previous version, v0.4]({url}/oak-0001-v0.4.txt)
 - [Previous version, v0.3]({url}/oak-0001-v0.3.txt)
 - [Blog]({url}/blog/)
@@ -308,6 +310,7 @@ def main():
     shutil.copy2(SPEC, SITE / "oak-0001.txt")
     for extra in ("oak-0001-v0.4.txt", "oak-0001-v0.3.txt", "evidence.txt"):
         shutil.copy2(HERE / extra, SITE / extra)
+    shutil.copy2(HERE.parent / "gym/harness/check_oak.py", SITE / "check_oak.py")
     (SITE / "llms.txt").write_text(LLMS.format(url=URL))
     blog.build(SITE, BASE_CSS, URL)
     print(f"wrote {SITE}")

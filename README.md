@@ -36,3 +36,7 @@ python3 gym/harness/run.py prose --mode all --agents claude_opus_5_5,codex_gpt_6
 2. `cd publish && wrangler deploy`
 
 The site is a static-assets Cloudflare Worker serving `oakspec.dev`.
+
+## Author & License
+
+Created by [nibzard](https://github.com/nibzard). The OAK-0001 specification, website, and harness/linter code are licensed under the [MIT License](LICENSE). Vendored evaluation substrates under `gym/substrates/` retain their upstream licenses (`itsdangerous` under BSD-3-Clause; `antimemetics` under CC BY-SA 3.0).

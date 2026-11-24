@@ -1,11 +1,13 @@
 # OAK-0001: Open Agent Knowledge
 
-> A plain-text convention for memory that people and AI agents share.
+> A plain-text convention for memory that people and AI agents share (MIT License, by nibzard).
 
 To set up OAK memory, read the spec and follow Section 8 (Set up):
 
 - [OAK-0001 (plain text)](https://oakspec.dev/oak-0001.txt)
+- [Reference linter (Python)](https://oakspec.dev/check_oak.py)
 - [Evidence behind the spec](https://oakspec.dev/evidence.txt)
+- [GitHub repository & gym](https://github.com/nibzard/oakspec)
 - [Previous version, v0.4](https://oakspec.dev/oak-0001-v0.4.txt)
 - [Previous version, v0.3](https://oakspec.dev/oak-0001-v0.3.txt)
 - [Blog](https://oakspec.dev/blog/)

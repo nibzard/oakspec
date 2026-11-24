@@ -328,7 +328,7 @@ BLOG_PAGE = """<!doctype html>
 {body}
 </main>
 <hr>
-<footer>Open Agent Knowledge. Spec: <a href="/oak-0001.txt">{url}/oak-0001.txt</a></footer>
+<footer>Open Agent Knowledge by <a href="https://github.com/nibzard">nibzard</a> (MIT) · <a href="/oak-0001.txt">Spec</a> · <a href="/check_oak.py">Linter</a> · <a href="https://github.com/nibzard/oakspec">GitHub</a></footer>
 </body>
 </html>
 """
